@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MoviesModule } from './movies/movies.module';
 import { Movie } from './movies/movies.entity';
+import { CommentsModule } from './comments/comments.module';
+import { Comment } from './comments/ comments.entity';
+
 import 'dotenv/config';
 
 @Module({
@@ -13,10 +16,11 @@ import 'dotenv/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Movie],
+      entities: [Movie, Comment],
       synchronize: true, // Solo en dev
     }),
     MoviesModule,
+    CommentsModule,
   ],
 })
 export class AppModule {}

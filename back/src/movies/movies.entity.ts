@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-// import { Comment } from '../../comments/comment.entity';
+import { Comment } from '../comments/ comments.entity';
 
 @Entity()
 export class Movie {
@@ -19,6 +19,6 @@ id!: string;
   @Column({ nullable: true })
   imageUrl!: string;
 
-  // @OneToMany(() => Comment, (comment) => comment.movie)
-  // comments!: Comment[];
+  @OneToMany(() => Comment, (comment) => comment.movie)
+  comments!: Comment[];
 }
