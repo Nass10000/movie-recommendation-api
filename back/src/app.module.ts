@@ -6,6 +6,7 @@ import { CommentsModule } from './comments/comments.module';
 import { Comment } from './comments/ comments.entity';
 
 import 'dotenv/config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import 'dotenv/config';
       entities: [Movie, Comment],
       synchronize: true, // Solo en dev
     }),
+    UsersModule,
     MoviesModule,
     CommentsModule,
   ],

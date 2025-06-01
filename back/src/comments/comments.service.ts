@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './ comments.entity';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Movie } from '../movies/movies.entity';
+import { UsersService } from '../users/users.service';
+// Update the import path below if the actual location is different
+import { UserRole } from '../common/role.enum';
 
 @Injectable()
 export class CommentsService {
@@ -13,6 +16,7 @@ export class CommentsService {
     private commentRepo: Repository<Comment>,
     @InjectRepository(Movie)
     private movieRepo: Repository<Movie>,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(dto: CreateCommentDto): Promise<Comment> {
@@ -20,6 +24,12 @@ export class CommentsService {
     if (!movie) {
       throw new Error('Movie not found');
     }
+
+    const user = await this.usersService.findById(dto.userId);
+    if (!user || user.role !== UserRole.USER) {
+      throw new ForbiddenException('Solo los usuarios pueden comentar');
+    }
+
     const comment = this.commentRepo.create({ ...dto, movie });
     return this.commentRepo.save(comment);
   }
@@ -28,13 +38,12 @@ export class CommentsService {
     return this.commentRepo.find({ relations: ['movie'] });
   }
 
-async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
-  await this.commentRepo.update(id, dto);
-  const updatedComment = await this.commentRepo.findOne({ where: { id }, relations: ['movie'] });
-  if (!updatedComment) {
-    throw new Error('Comment not found');
+  async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
+    await this.commentRepo.update(id, dto);
+    const updatedComment = await this.commentRepo.findOne({ where: { id }, relations: ['movie'] });
+    if (!updatedComment) {
+      throw new Error('Comment not found');
+    }
+    return updatedComment;
   }
-  return updatedComment;
-}
-
 }
