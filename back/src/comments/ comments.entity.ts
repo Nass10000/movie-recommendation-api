@@ -12,6 +12,10 @@ export class Comment {
   @Column()
   author!: string;
 
+@Column({ nullable: true })
+sentiment!: string;
+
+
   @ManyToOne(() => Movie, (movie: Movie) => movie.comments, { onDelete: 'CASCADE' })
   movie!: Movie;
 }

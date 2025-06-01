@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Put, Param, ParseUUIDPipe } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -15,4 +15,10 @@ export class CommentsController {
   findAll() {
     return this.commentsService.findAll();
   }
+
+  @Put(':id/sentiment')
+updateSentiment(@Param('id', ParseUUIDPipe) id: string, @Body('sentiment') sentiment: string) {
+  return this.commentsService.updateSentiment(id, sentiment);
+}
+
 }

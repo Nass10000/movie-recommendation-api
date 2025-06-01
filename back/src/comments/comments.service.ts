@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './ comments.entity';
@@ -37,6 +37,13 @@ export class CommentsService {
   findAll(): Promise<Comment[]> {
     return this.commentRepo.find({ relations: ['movie'] });
   }
+ async updateSentiment(id: string, sentiment: string) {
+  const comment = await this.commentRepo.findOneBy({ id });
+  if (!comment) throw new NotFoundException('Comentario no encontrado');
+
+  comment.sentiment = sentiment;
+  return this.commentRepo.save(comment);
+}
 
   async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
     await this.commentRepo.update(id, dto);
