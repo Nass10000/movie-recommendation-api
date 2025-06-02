@@ -1,27 +1,22 @@
 import {
   Controller,
+  Get,
   Post,
   Body,
-  Get,
-  Put,
   Param,
-  ParseUUIDPipe,
-  UseGuards,
+  Put,
+  Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { JwtAuthGuard } from '../common/jwt-auth.guard';
-import { RoleGuard } from '../common/role.guard';
-import { Roles } from '../common/roles.decorator';
-import { UserRole } from '../common/role.enum';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  // @UseGuards(JwtAuthGuard, RoleGuard)
-  // @Roles(UserRole.USER)
   create(@Body() dto: CreateCommentDto) {
     return this.commentsService.create(dto);
   }
@@ -31,11 +26,22 @@ export class CommentsController {
     return this.commentsService.findAll();
   }
 
-  @Put(':id/sentiment')
-  updateSentiment(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body('sentiment') sentiment: string,
-  ) {
-    return this.commentsService.updateSentiment(id, sentiment);
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const comment = await this.commentsService.findOne(id);
+    if (!comment) {
+      throw new NotFoundException('Comentario no encontrado');
+    }
+    return comment;
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
+    return this.commentsService.update(id, dto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return this.commentsService.remove(id);
   }
 }
