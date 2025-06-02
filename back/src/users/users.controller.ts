@@ -8,11 +8,16 @@ import {
   ParseUUIDPipe,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { MoviesService } from '../movies/movies.service';
 import { CreateMovieDto } from '../movies/dto/create-movie.dto';
+import { Roles } from '../common/roles.decorator';
+import { RoleGuard } from '../common/role.guard';
+import { JwtAuthGuard } from '../common/jwt-auth.guard';
+import { UserRole } from '../common/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -35,6 +40,8 @@ export class UsersController {
   }
 
   @Post(':userId/movies')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   async createMovie(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() dto: CreateMovieDto,

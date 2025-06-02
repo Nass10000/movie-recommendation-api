@@ -44,4 +44,12 @@ export class CommentsController {
   async remove(@Param('id') id: string) {
     return this.commentsService.remove(id);
   }
+
+  @Put(':id/sentiment')
+  async updateSentiment(
+    @Param('id') id: string,
+    @Body('sentiment') sentiment: string,
+  ) {
+    return this.commentsService.updateSentiment(id, sentiment);
+  }
 }

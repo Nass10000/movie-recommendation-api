@@ -47,6 +47,6 @@ update_payload = {
 res = requests.put(f"{COMMENTS_API}/{comment_id}", json=update_payload)
 print("[COMMENT UPDATED]", res.status_code, res.json())
 
-# 6. Eliminar comentario
-res = requests.delete(f"{COMMENTS_API}/{comment_id}")
-print("[COMMENT DELETED]", res.status_code, res.text)
+# # 6. Eliminar comentario
+# res = requests.delete(f"{COMMENTS_API}/{comment_id}")
+# print("[COMMENT DELETED]", res.status_code, res.text)
