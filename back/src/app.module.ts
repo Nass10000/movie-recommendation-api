@@ -7,6 +7,7 @@ import { Comment } from './comments/ comments.entity';
 
 import 'dotenv/config';
 import { UsersModule } from './users/users.module';
+import { User } from './users/users.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { UsersModule } from './users/users.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Movie, Comment],
+      entities: [Movie, Comment,User],
       synchronize: true, // Solo en dev
     }),
     UsersModule,

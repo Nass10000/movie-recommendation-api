@@ -16,10 +16,22 @@ export class MoviesService {
     private readonly usersService: UsersService,
   ) {}
 
-  create(dto: CreateMovieDto) {
+async create(dto: CreateMovieDto) {
+  console.log("🎬 DTO recibido:", dto);
+  try {
     const movie = this.movieRepo.create(dto);
-    return this.movieRepo.save(movie);
+    const saved = await this.movieRepo.save(movie);
+    console.log("✅ Película guardada:", saved);
+    return saved;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("❌ Error al crear movie:", error.message);
+    } else {
+      console.log("❌ Error al crear movie:", error);
+    }
+    throw new Error("Error interno al guardar la película");
   }
+}
 
   async createByUser(userId: string, dto: CreateMovieDto) {
     const user = await this.usersService.findById(userId);

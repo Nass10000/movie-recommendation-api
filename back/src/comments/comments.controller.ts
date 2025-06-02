@@ -20,8 +20,8 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(UserRole.USER)
+  // @UseGuards(JwtAuthGuard, RoleGuard)
+  // @Roles(UserRole.USER)
   create(@Body() dto: CreateCommentDto) {
     return this.commentsService.create(dto);
   }

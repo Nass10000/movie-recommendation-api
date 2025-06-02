@@ -21,8 +21,8 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @Roles(UserRole.ADMIN)
+  // @UseGuards(JwtAuthGuard, RoleGuard)
+  // @Roles(UserRole.ADMIN)
   create(@Body() dto: CreateMovieDto) {
     return this.moviesService.create(dto);
   }
@@ -45,7 +45,7 @@ export class MoviesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RoleGuard)
+  // @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
     return this.moviesService.remove(id);
