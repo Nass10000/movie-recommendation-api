@@ -10,14 +10,11 @@ export class Comment {
   @Column()
   content!: string;
 
-  @Column()
-  author!: string;
+  @Column({ nullable: true })
+  sentiment!: string;
 
-@Column({ nullable: true })
-sentiment!: string;
-
-@ManyToOne(() => User, { nullable: true, eager: true }) // eager para que devuelva el user
-user?: User;
+  @ManyToOne(() => User, { nullable: true, eager: true, onDelete: 'SET NULL' })
+  user?: User;
 
   @ManyToOne(() => Movie, (movie: Movie) => movie.comments, { onDelete: 'CASCADE' })
   movie!: Movie;

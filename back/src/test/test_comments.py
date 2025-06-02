@@ -22,8 +22,10 @@ time.sleep(1)
 # 2. Crear comentario
 comment_payload = {
     "content": "Una de las mejores películas que he visto.",
-    "movieId": movie_id
+    "movieId": movie_id,
+    "userId": "00000000-0000-0000-0000-000000000001"
 }
+
 res = requests.post(COMMENTS_API, json=comment_payload)
 print("[COMMENT CREATED]", res.status_code, res.json())
 comment = res.json()

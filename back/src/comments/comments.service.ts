@@ -21,7 +21,8 @@ export class CommentsService {
     private readonly usersService: UsersService,
   ) {}
 
-  async create(dto: CreateCommentDto): Promise<Comment> {
+ async create(dto: CreateCommentDto): Promise<Comment> {
+  try {
     const movie = await this.movieRepo.findOneBy({ id: dto.movieId });
     if (!movie) throw new NotFoundException('Película no encontrada');
 
@@ -36,8 +37,19 @@ export class CommentsService {
       user,
     });
 
-    return this.commentRepo.save(comment);
+    const saved = await this.commentRepo.save(comment);
+    console.log('✅ Comentario guardado:', saved);
+    return saved;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log('❌ ERROR REAL:', error.message);
+      console.log('🪵 ERROR STACK:', error.stack);
+    } else {
+      console.log('❌ ERROR REAL:', error);
+    }
+    throw error;
   }
+}
 
   findAll(): Promise<Comment[]> {
     return this.commentRepo.find({ relations: ['movie', 'user'] });
