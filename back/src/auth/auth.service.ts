@@ -14,20 +14,19 @@ export class AuthService {
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
     if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, ...result } = user;
-      return result;
+      const { password, ...userObj } = user; // 👈 así excluyes password
+      return userObj;
     }
     return null;
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.id, roles: user.roles };
+    console.log('LOGIN USER:', user);
+    const payload = { username: user.username, sub: user.id, role: user.role };
     return { access_token: this.jwtService.sign(payload) };
   }
 
   async register(dto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const userToCreate = { ...dto, password: hashedPassword };
-    return this.usersService.create(userToCreate);
+    return this.usersService.register(dto);
   }
 }

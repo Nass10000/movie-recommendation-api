@@ -13,6 +13,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ unique: true, length: 20 }) // 👈 agrega esto
+  username!: string;
+
   @Column({ length: 100 })
   fullName!: string;
 

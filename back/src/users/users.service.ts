@@ -22,6 +22,11 @@ export class UsersService {
     return this.userRepo.save(user);
   }
 
+  async create(userData: any): Promise<any> {
+    const user = this.userRepo.create(userData);
+    return this.userRepo.save(user);
+  }
+
   findAll(): Promise<User[]> {
     return this.userRepo.find();
   }
@@ -35,13 +40,15 @@ export class UsersService {
   }
 
   async findByUsername(username: string): Promise<User | undefined> {
-    // Replace 'username' with the correct property name from your User entity, e.g., 'email' if that's what you want to search by
-    const user = await this.userRepo.findOne({ where: { email: username } });
+    const user = await this.userRepo.findOne({
+      where: { username },
+      select: ['id', 'username', 'fullName', 'email', 'password', 'role', 'createdAt', 'updatedAt'],
+    });
     return user === null ? undefined : user;
   }
 
-  async create(userData: CreateUserDto): Promise<User> {
-    const user = this.userRepo.create(userData);
-    return this.userRepo.save(user);
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.userRepo.findOne({ where: { email } });
+    return user === null ? undefined : user;
   }
 }
