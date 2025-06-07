@@ -19,8 +19,11 @@ import { RoleGuard } from '../common/role.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserRole } from '../common/role.enum';
 import { RegisterDto } from '../auth/dto/register.dto';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
-@UseGuards(JwtAuthGuard) // 👈 protege todas las rutas
+@ApiTags('users')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -28,11 +31,15 @@ export class UsersController {
     private readonly moviesService: MoviesService,
   ) {}
 
+  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
+  @ApiResponse({ status: 201, description: 'Usuario registrado correctamente.' })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.usersService.register(dto);
   }
 
+  @ApiOperation({ summary: 'Crear usuario (alias de register)' })
+  @ApiResponse({ status: 201, description: 'Usuario creado correctamente.' })
   @Post()
   async create(@Body() dto: RegisterDto) {
     try {
@@ -46,6 +53,10 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({ summary: 'Crear película como admin para un usuario' })
+  @ApiResponse({ status: 201, description: 'Película creada por admin.' })
+  @ApiParam({ name: 'userId', type: 'string', description: 'ID del usuario' })
+  @ApiBody({ type: CreateMovieDto })
   @Post(':userId/movies')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
@@ -64,11 +75,16 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({ summary: 'Obtener todos los usuarios' })
+  @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @ApiOperation({ summary: 'Obtener usuario por ID' })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado.' })
+  @ApiParam({ name: 'id', type: 'string', description: 'ID del usuario' })
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.findById(id);

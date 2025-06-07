@@ -4,8 +4,10 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './local-auth.guard';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -13,11 +15,17 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
+  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
+  @ApiResponse({ status: 201, description: 'Usuario registrado correctamente.' })
+  @ApiBody({ type: RegisterDto })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.usersService.create(registerDto);
   }
 
+  @ApiOperation({ summary: 'Login de usuario' })
+  @ApiResponse({ status: 201, description: 'Login exitoso, retorna JWT.' })
+  @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
