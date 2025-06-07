@@ -33,4 +33,10 @@ export class UsersService {
     }
     return user;
   }
+
+  async findByUsername(username: string): Promise<User | undefined> {
+    // Replace 'username' with the correct property name from your User entity, e.g., 'email' if that's what you want to search by
+    const user = await this.userRepo.findOne({ where: { email: username } });
+    return user === null ? undefined : user;
+  }
 }

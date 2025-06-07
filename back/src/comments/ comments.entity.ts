@@ -13,6 +13,9 @@ export class Comment {
   @Column({ nullable: true })
   sentiment!: string;
 
+  @Column({ type: 'int', nullable: true })
+  rating?: number;
+
   @ManyToOne(() => User, { nullable: true, eager: true, onDelete: 'SET NULL' })
   user?: User;
 

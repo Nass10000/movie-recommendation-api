@@ -4,6 +4,7 @@ import { MoviesModule } from './movies/movies.module';
 import { Movie } from './movies/movies.entity';
 import { CommentsModule } from './comments/comments.module';
 import { Comment } from './comments/ comments.entity';
+import { AuthModule } from './auth/auth.module';
 
 import 'dotenv/config';
 import { UsersModule } from './users/users.module';
@@ -19,11 +20,14 @@ import { User } from './users/users.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [Movie, Comment,User],
-      synchronize: true, // Solo en dev
+      synchronize: true,
+      dropSchema:false, 
     }),
     UsersModule,
     MoviesModule,
     CommentsModule,
+        AuthModule,
+    
   ],
 })
 export class AppModule {}

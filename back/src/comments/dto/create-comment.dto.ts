@@ -1,5 +1,5 @@
 // create-comment.dto.ts
-import { IsString, IsUUID, MinLength } from 'class-validator';
+import { IsString, IsUUID, MinLength, IsOptional, IsInt, Min, Max } from 'class-validator';
 
 export class CreateCommentDto {
   @IsString()
@@ -11,4 +11,10 @@ export class CreateCommentDto {
 
   @IsUUID()
   userId!: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  rating?: number;
 }
