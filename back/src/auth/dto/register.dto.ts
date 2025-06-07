@@ -1,6 +1,6 @@
 import { IsString, IsEmail, MinLength, MaxLength, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Match } from './macth.decorator';
+import { Match } from './match.decorator';
 
 export class RegisterDto {
   @ApiProperty({ example: 'johndoe', description: 'Nombre de usuario único' })
@@ -8,6 +8,10 @@ export class RegisterDto {
   @MinLength(4, { message: 'El username debe tener al menos 4 caracteres' })
   @MaxLength(20, { message: 'El username debe tener máximo 20 caracteres' })
   username!: string;
+
+  @ApiProperty({ example: 'John Doe', description: 'Nombre completo del usuario' })
+  @IsString()
+  fullName!: string;
 
   @ApiProperty({ example: 'john@example.com', description: 'Correo válido' })
   @IsEmail({}, { message: 'El correo no es válido' })

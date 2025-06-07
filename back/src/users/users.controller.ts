@@ -16,9 +16,10 @@ import { MoviesService } from '../movies/movies.service';
 import { CreateMovieDto } from '../movies/dto/create-movie.dto';
 import { Roles } from '../common/roles.decorator';
 import { RoleGuard } from '../common/role.guard';
-import { JwtAuthGuard } from '../common/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserRole } from '../common/role.enum';
 
+@UseGuards(JwtAuthGuard) // 👈 protege todas las rutas
 @Controller('users')
 export class UsersController {
   constructor(

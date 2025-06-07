@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors(); // 👈 habilita CORS
   app.useGlobalFilters(new HttpExceptionFilter()); // 👈 se aplica globalmente
   app.useGlobalPipes(new ValidationPipe()); // 👈 agrega esta línea
 
