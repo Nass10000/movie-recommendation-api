@@ -32,7 +32,7 @@ export class CommentsService {
       }
 
       const comment = this.commentRepo.create({
-        content: dto.content,
+        ...dto, // Incluye rating si viene en dto
         movie,
         user,
       });
@@ -67,21 +67,24 @@ export class CommentsService {
     return this.commentRepo.save(comment);
   }
 
- async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
-  const comment = await this.commentRepo.findOne({ where: { id }, relations: ['movie', 'user'] });
-  if (!comment) throw new NotFoundException('Comentario no encontrado');
+  async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
+    const comment = await this.commentRepo.findOne({ where: { id }, relations: ['movie', 'user'] });
+    if (!comment) throw new NotFoundException('Comentario no encontrado');
 
-  const movie = await this.movieRepo.findOneBy({ id: dto.movieId });
-  if (!movie) throw new NotFoundException('Película no encontrada');
+    let movie = comment.movie;
+    if (dto.movieId) {
+      const foundMovie = await this.movieRepo.findOneBy({ id: dto.movieId });
+      if (!foundMovie) throw new NotFoundException('Película no encontrada');
+      movie = foundMovie;
+    }
 
-  this.commentRepo.merge(comment, {
-    content: dto.content,
-    movie,
-  });
+    this.commentRepo.merge(comment, {
+      ...dto, // Incluye rating si viene en dto
+      movie,
+    });
 
-  return this.commentRepo.save(comment);
-}
-
+    return this.commentRepo.save(comment);
+  }
 
   async remove(id: string): Promise<void> {
     const result = await this.commentRepo.delete(id);

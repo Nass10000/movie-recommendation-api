@@ -39,6 +39,12 @@ export class MoviesController {
     return this.moviesService.findOne(id);
   }
 
+  @Get(':id/rating')
+  async getAverageRating(@Param('id') id: string) {
+    console.log(`GET /movies/${id}/rating`); // 👈 log para debug
+    return { averageRating: await this.moviesService.getAverageRating(id) };
+  }
+
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateMovieDto) {
     console.log(`PUT /movies/${id}`, dto); // 👈 log para debug

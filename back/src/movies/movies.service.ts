@@ -1,7 +1,7 @@
 // movies.service.ts
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm'; // 👈 importa DataSource
 import { Movie } from './movies.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -14,24 +14,25 @@ export class MoviesService {
     @InjectRepository(Movie)
     private movieRepo: Repository<Movie>,
     private readonly usersService: UsersService,
+    private readonly dataSource: DataSource, // 👈 inyecta DataSource
   ) {}
 
-async create(dto: CreateMovieDto) {
-  console.log("🎬 DTO recibido:", dto);
-  try {
-    const movie = this.movieRepo.create(dto);
-    const saved = await this.movieRepo.save(movie);
-    console.log("✅ Película guardada:", saved);
-    return saved;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.log("❌ Error al crear movie:", error.message);
-    } else {
-      console.log("❌ Error al crear movie:", error);
+  async create(dto: CreateMovieDto) {
+    console.log("🎬 DTO recibido:", dto);
+    try {
+      const movie = this.movieRepo.create(dto);
+      const saved = await this.movieRepo.save(movie);
+      console.log("✅ Película guardada:", saved);
+      return saved;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("❌ Error al crear movie:", error.message);
+      } else {
+        console.log("❌ Error al crear movie:", error);
+      }
+      throw new Error("Error interno al guardar la película");
     }
-    throw new Error("Error interno al guardar la película");
   }
-}
 
   async createByUser(userId: string, dto: CreateMovieDto) {
     const user = await this.usersService.findById(userId);
@@ -55,5 +56,17 @@ async create(dto: CreateMovieDto) {
 
   remove(id: string) {
     return this.movieRepo.delete(id);
+  }
+
+  async getAverageRating(movieId: string): Promise<number | null> {
+    const result = await this.dataSource
+      .getRepository('Comment')
+      .createQueryBuilder('comment')
+      .select('AVG(comment.rating)', 'avg')
+      .where('comment.movieId = :movieId', { movieId })
+      .andWhere('comment.rating IS NOT NULL')
+      .getRawOne();
+
+    return result && result.avg !== null ? parseFloat(result.avg) : null;
   }
 }
