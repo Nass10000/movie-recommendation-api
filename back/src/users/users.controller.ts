@@ -18,6 +18,7 @@ import { Roles } from '../common/roles.decorator';
 import { RoleGuard } from '../common/role.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UserRole } from '../common/role.enum';
+import { RegisterDto } from '../auth/dto/register.dto';
 
 @UseGuards(JwtAuthGuard) // 👈 protege todas las rutas
 @Controller('users')
@@ -27,8 +28,13 @@ export class UsersController {
     private readonly moviesService: MoviesService,
   ) {}
 
+  @Post('register')
+  async register(@Body() dto: RegisterDto) {
+    return this.usersService.register(dto);
+  }
+
   @Post()
-  async create(@Body() dto: CreateUserDto) {
+  async create(@Body() dto: RegisterDto) {
     try {
       const user = await this.usersService.register(dto);
       return { message: 'Usuario creado', user };

@@ -1,23 +1,37 @@
-import { Controller, Post, UseGuards, Body, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
 import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { UsersService } from '../users/users.service';
+import { LocalAuthGuard } from './local-auth.guard';
+
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private usersService: UsersService,
+  ) {}
+
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    return this.usersService.create(registerDto);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: Request) {
-    console.log('POST /auth/login', req.user); // 👈 log para debug
-    return this.authService.login(req.user);
-  }
+  async login(@Request() req: any) {
+    console.log('🔑 Login body:', req.body);
+    console.log('👤 Usuario validado:', req.user);
 
-  @Post('register')
-  async register(@Body() createUserDto: RegisterDto) {
-    console.log('POST /auth/register', createUserDto); // 👈 log para debug
-    return this.authService.register(createUserDto);
+    try {
+      console.log('➡️ Llamando a AuthService.login con usuario:', req.user);
+      const token = await this.authService.login(req.user);
+      console.log('✅ Token generado:', token);
+      return token;
+    } catch (err) {
+      console.error('❌ Error en AuthService.login():', err);
+      throw err;
+    }
   }
 }

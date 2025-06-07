@@ -1,32 +1,41 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { Injectable, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { User } from '../users/users.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    private usersService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByUsername(username);
-    if (user && (await bcrypt.compare(pass, user.password))) {
-      const { password, ...userObj } = user; // 👈 así excluyes password
-      return userObj;
+  async validateUser(username: string, password: string): Promise<User> {
+    const user = await this.usersService.findOneByUsername(username);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    return null;
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    // remove password before returning
+    delete (user as any).password;
+    return user;
   }
 
-  async login(user: any) {
-    console.log('LOGIN USER:', user);
-    const payload = { username: user.username, sub: user.id, role: user.role };
-    return { access_token: this.jwtService.sign(payload) };
-  }
-
-  async register(dto: CreateUserDto) {
-    return this.usersService.register(dto);
+  async login(user: User): Promise<{ access_token: string }> {
+    try {
+      const payload = { username: user.username, sub: user.id, role: user.role };
+      console.log('📋 Payload para JWT:', payload);
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    } catch (err) {
+      console.error('JWT sign error:', err);
+      throw new InternalServerErrorException('Could not generate token');
+    }
   }
 }
