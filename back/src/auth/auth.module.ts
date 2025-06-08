@@ -10,11 +10,15 @@ import { UsersModule } from '../users/users.module';
 
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { Auth0Strategy } from './auth0.strategy';
+import { Auth0GoogleStrategy } from './auth0-google.strategy';
+import { Auth0FacebookStrategy } from './auth0-facebook.strategy';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Module({
   imports: [
     ConfigModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'auth0' }), // 👈 aquí agregas el defaultStrategy
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
@@ -26,7 +30,15 @@ import { JwtStrategy } from './jwt.strategy';
     TypeOrmModule.forFeature([User]),
     UsersModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalAuthGuard,
+    Auth0GoogleStrategy,
+    Auth0FacebookStrategy,
+    LocalStrategy,
+    JwtStrategy,
+    Auth0Strategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

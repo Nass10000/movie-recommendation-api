@@ -69,4 +69,17 @@ export class MoviesService {
 
     return result && result.avg !== null ? parseFloat(result.avg) : null;
   }
+
+  async addComment(movieId: string, userId: string, commentDto: { comment: string; rating: number }) {
+    // Implement logic to add a comment and rating to the movie
+    // Example placeholder implementation:
+    // You should replace this with your actual database logic
+    return {
+      movieId,
+      userId,
+      comment: commentDto.comment,
+      rating: commentDto.rating,
+      message: 'Comentario agregado correctamente.',
+    };
+  }
 }

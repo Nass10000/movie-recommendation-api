@@ -64,6 +64,7 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Acceso denegado. Solo admin.' })
   @ApiParam({ name: 'userId', type: 'string', description: 'ID del usuario' })
   @ApiBody({ type: CreateMovieDto })
+  // Solo ADMIN puede crear películas para otros usuarios
   @Post(':userId/movies')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
@@ -82,17 +83,35 @@ export class UsersController {
     }
   }
 
+  // Solo USER puede comentar películas (ejemplo)
+  @Post(':userId/comments')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(UserRole.USER)
+  async commentMovie(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() commentDto: { movieId: string; comment: string; rating: number },
+  ) {
+    // Aquí iría la lógica para agregar un comentario y rating a una película
+    return { message: 'Comentario agregado', ...commentDto };
+  }
+
+  // ADMIN y USER pueden ver todos los usuarios
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios.' })
   @Get()
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   findAll() {
     return this.usersService.findAll();
   }
 
+  // ADMIN y USER pueden ver usuario por ID
   @ApiOperation({ summary: 'Obtener usuario por ID' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del usuario' })
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.findById(id);
   }

@@ -67,9 +67,14 @@ export class CommentsService {
     return this.commentRepo.save(comment);
   }
 
-  async update(id: string, dto: UpdateCommentDto): Promise<Comment> {
+  async update(id: string, dto: UpdateCommentDto, userId: string): Promise<Comment> {
     const comment = await this.commentRepo.findOne({ where: { id }, relations: ['movie', 'user'] });
     if (!comment) throw new NotFoundException('Comentario no encontrado');
+
+    // Solo el autor puede actualizar
+    if (!comment.user || comment.user.id !== userId) {
+      throw new ForbiddenException('No puedes editar comentarios de otros usuarios');
+    }
 
     let movie = comment.movie;
     if (dto.movieId) {
@@ -79,7 +84,7 @@ export class CommentsService {
     }
 
     this.commentRepo.merge(comment, {
-      ...dto, // Incluye rating si viene en dto
+      ...dto,
       movie,
     });
 

@@ -8,11 +8,15 @@ import {
   Delete,
   NotFoundException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RoleGuard } from '../common/role.guard';
+import { Roles } from '../common/roles.decorator';
+import { UserRole } from '../common/role.enum';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -21,6 +25,7 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @ApiTags('comments')
 @ApiBearerAuth()
@@ -29,27 +34,33 @@ import {
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
-  @ApiOperation({ summary: 'Crear un nuevo comentario' })
+  @ApiOperation({ summary: 'Crear un nuevo comentario (solo USER)' })
   @ApiResponse({ status: 201, description: 'Comentario creado correctamente.' })
   @ApiBody({ type: CreateCommentDto })
   @Post()
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.USER)
   create(@Body() dto: CreateCommentDto) {
     console.log('POST /comments', dto); // 👈 log para debug
     return this.commentsService.create(dto);
   }
 
-  @ApiOperation({ summary: 'Obtener todos los comentarios' })
+  @ApiOperation({ summary: 'Obtener todos los comentarios (ADMIN o USER)' })
   @ApiResponse({ status: 200, description: 'Lista de comentarios.' })
   @Get()
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   findAll() {
     console.log('GET /comments'); // 👈 log para debug
     return this.commentsService.findAll();
   }
 
-  @ApiOperation({ summary: 'Obtener un comentario por ID' })
+  @ApiOperation({ summary: 'Obtener un comentario por ID (ADMIN o USER)' })
   @ApiResponse({ status: 200, description: 'Comentario encontrado.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @Get(':id')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
   async findOne(@Param('id') id: string) {
     console.log(`GET /comments/${id}`); // 👈 log para debug
     const comment = await this.commentsService.findOne(id);
@@ -59,30 +70,43 @@ export class CommentsController {
     return comment;
   }
 
-  @ApiOperation({ summary: 'Actualizar un comentario' })
+  @ApiOperation({ summary: 'Actualizar un comentario (solo USER)' })
   @ApiResponse({ status: 200, description: 'Comentario actualizado correctamente.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @ApiBody({ type: UpdateCommentDto })
   @Put(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
-    console.log(`PUT /comments/${id}`, dto); // 👈 log para debug
-    return this.commentsService.update(id, dto);
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.USER)
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCommentDto,
+    @Req() req: Request
+  ) {
+    console.log(`PUT /comments/${id}`, dto);
+    if (!req.user) {
+      throw new NotFoundException('Usuario no autenticado');
+    }
+    return this.commentsService.update(id, dto, (req.user as any).id);
   }
 
-  @ApiOperation({ summary: 'Eliminar un comentario' })
+  @ApiOperation({ summary: 'Eliminar un comentario (solo ADMIN)' })
   @ApiResponse({ status: 200, description: 'Comentario eliminado correctamente.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @Delete(':id')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN)
   async remove(@Param('id') id: string) {
     console.log(`DELETE /comments/${id}`); // 👈 log para debug
     return this.commentsService.remove(id);
   }
 
-  @ApiOperation({ summary: 'Actualizar el sentimiento de un comentario' })
+  @ApiOperation({ summary: 'Actualizar el sentimiento de un comentario (solo ADMIN)' })
   @ApiResponse({ status: 200, description: 'Sentimiento actualizado correctamente.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @ApiBody({ schema: { type: 'object', properties: { sentiment: { type: 'string' } } } })
   @Put(':id/sentiment')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN)
   async updateSentiment(
     @Param('id') id: string,
     @Body('sentiment') sentiment: string,

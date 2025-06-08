@@ -7,7 +7,9 @@ import {
   Put,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -31,12 +33,14 @@ import {
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @ApiOperation({ summary: 'Crear una nueva película' })
+  @ApiOperation({ summary: 'Crear una nueva película (solo admin)' })
   @ApiResponse({ status: 201, description: 'Película creada correctamente.' })
   @ApiBody({ type: CreateMovieDto })
   @Post()
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN)
   create(@Body() dto: CreateMovieDto) {
-    console.log('POST /movies', dto); // 👈 log para debug
+    console.log('POST /movies', dto);
     return this.moviesService.create(dto);
   }
 
@@ -44,7 +48,7 @@ export class MoviesController {
   @ApiResponse({ status: 200, description: 'Lista de películas.' })
   @Get()
   findAll() {
-    console.log('GET /movies'); // 👈 log para debug
+    console.log('GET /movies');
     return this.moviesService.findAll();
   }
 
@@ -53,7 +57,7 @@ export class MoviesController {
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
   @Get(':id')
   findOne(@Param('id') id: string) {
-    console.log(`GET /movies/${id}`); // 👈 log para debug
+    console.log(`GET /movies/${id}`);
     return this.moviesService.findOne(id);
   }
 
@@ -62,17 +66,19 @@ export class MoviesController {
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
   @Get(':id/rating')
   async getAverageRating(@Param('id') id: string) {
-    console.log(`GET /movies/${id}/rating`); // 👈 log para debug
+    console.log(`GET /movies/${id}/rating`);
     return { averageRating: await this.moviesService.getAverageRating(id) };
   }
 
-  @ApiOperation({ summary: 'Actualizar una película' })
+  @ApiOperation({ summary: 'Actualizar una película (solo admin)' })
   @ApiResponse({ status: 200, description: 'Película actualizada correctamente.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
   @ApiBody({ type: UpdateMovieDto })
   @Put(':id')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateMovieDto) {
-    console.log(`PUT /movies/${id}`, dto); // 👈 log para debug
+    console.log(`PUT /movies/${id}`, dto);
     return this.moviesService.update(id, dto);
   }
 
@@ -80,9 +86,26 @@ export class MoviesController {
   @ApiResponse({ status: 200, description: 'Película eliminada correctamente.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
   @Delete(':id')
+  @UseGuards(RoleGuard)
   @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
-    console.log(`DELETE /movies/${id}`); // 👈 log para debug
+    console.log(`DELETE /movies/${id}`);
     return this.moviesService.remove(id);
+  }
+
+  @ApiOperation({ summary: 'Comentar una película (solo usuarios con rol USER)' })
+  @ApiResponse({ status: 201, description: 'Comentario agregado correctamente.' })
+  @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
+  @Post(':id/comments')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.USER)
+  async commentMovie(
+    @Param('id') movieId: string,
+    @Body() commentDto: { comment: string; rating: number },
+    @Req() req: Request & { user?: any },
+  ) {
+    // req.user contiene el usuario autenticado
+    const userId = req.user?.id;
+    return this.moviesService.addComment(movieId, userId, commentDto);
   }
 }
