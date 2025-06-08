@@ -33,6 +33,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Registrar un nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado correctamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.usersService.register(dto);
@@ -40,6 +42,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Crear usuario (alias de register)' })
   @ApiResponse({ status: 201, description: 'Usuario creado correctamente.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
   @Post()
   async create(@Body() dto: RegisterDto) {
     try {
@@ -55,6 +59,9 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Crear película como admin para un usuario' })
   @ApiResponse({ status: 201, description: 'Película creada por admin.' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado. Solo admin.' })
   @ApiParam({ name: 'userId', type: 'string', description: 'ID del usuario' })
   @ApiBody({ type: CreateMovieDto })
   @Post(':userId/movies')

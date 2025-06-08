@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comment } from './ comments.entity';
+import { Comment } from './comments.entity';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Movie } from '../movies/movies.entity';

@@ -1,12 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersService } from './users.service';
-
 import { User } from './users.entity';
-
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';       // ← **¡IMPORTAR Y DECLARAR!**
+import { MoviesModule } from '../movies/movies.module';      // ← **¡IMPORTAR MÓDULO DE PELÍCULAS!**
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    forwardRef(() => MoviesModule),
+  ],
+  controllers: [UsersController],  // ← **AQUÍ**
   providers: [UsersService],
   exports: [UsersService],
 })

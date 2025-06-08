@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Comment } from '../comments/ comments.entity';
+import { Comment } from '../comments/comments.entity';
 
 @Entity()
 export class Movie {
