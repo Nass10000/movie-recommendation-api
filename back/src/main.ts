@@ -5,20 +5,25 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppDataSource } from './common/data-source';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { join } from 'path'; // <-- Agrega esto
 
 // Importa los módulos que definen rutas para la documentación Swagger
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MoviesModule } from './movies/movies.module';
 import { CommentsModule } from './comments/comments.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   await AppDataSource.initialize();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const httpAdapterHost = app.get(HttpAdapterHost);
 
   // Habilita CORS
   app.enableCors();
+
+  // Sirve archivos estáticos del frontend (React build)
+  app.useStaticAssets(join(__dirname, '..', 'frontend', 'build'));
 
   // Filtros y pipes globales
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
@@ -46,7 +51,7 @@ async function bootstrap() {
   );
 
   // Inicia el servidor en el puerto 3000
-  await app.listen(3000);
+  await app.listen(3001);
 }
 
 bootstrap();
