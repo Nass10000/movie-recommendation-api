@@ -51,7 +51,7 @@ async function bootstrap() {
   );
 
   // Inicia el servidor en el puerto 3000
-  await app.listen(3001);
+  await app.listen(3000);
 }
 
 bootstrap();

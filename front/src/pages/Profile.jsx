@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/Authcontext';
 import { getUser } from '../api/users';
+import { Container, Paper, Typography, Stack, Alert, CircularProgress } from '@mui/material';
 
 export default function Profile() {
   const { token, user } = useContext(AuthContext);
@@ -18,19 +19,40 @@ export default function Profile() {
     }
   }, [user, token]);
 
-  if (!token) return <div>Debes iniciar sesión para ver tu perfil.</div>;
-  if (loading) return <div>Cargando perfil...</div>;
-  if (!profile) return <div>No se pudo cargar el perfil.</div>;
+  if (!token)
+    return (
+      <Container maxWidth="sm" sx={{ mt: 8 }}>
+        <Alert severity="info">Debes iniciar sesión para ver tu perfil.</Alert>
+      </Container>
+    );
+  if (loading)
+    return (
+      <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
+        <CircularProgress />
+        <Typography variant="body1" sx={{ mt: 2 }}>Cargando perfil...</Typography>
+      </Container>
+    );
+  if (!profile)
+    return (
+      <Container maxWidth="sm" sx={{ mt: 8 }}>
+        <Alert severity="error">No se pudo cargar el perfil.</Alert>
+      </Container>
+    );
 
   return (
-    <div>
-      <h2>Perfil de usuario</h2>
-      <div><strong>Usuario:</strong> {profile.username}</div>
-      <div><strong>Nombre completo:</strong> {profile.fullName}</div>
-      <div><strong>Email:</strong> {profile.email}</div>
-      <div><strong>Rol:</strong> {profile.role}</div>
-      <div><strong>Creado:</strong> {new Date(profile.createdAt).toLocaleString()}</div>
-      {/* Puedes agregar aquí la lista de películas favoritas, comentarios, etc. */}
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Perfil de usuario
+        </Typography>
+        <Stack spacing={2}>
+          <Typography><strong>Usuario:</strong> {profile.username}</Typography>
+          <Typography><strong>Nombre completo:</strong> {profile.fullName}</Typography>
+          <Typography><strong>Email:</strong> {profile.email}</Typography>
+          <Typography><strong>Rol:</strong> {profile.role}</Typography>
+          <Typography><strong>Creado:</strong> {new Date(profile.createdAt).toLocaleString()}</Typography>
+        </Stack>
+      </Paper>
+    </Container>
   );
 }

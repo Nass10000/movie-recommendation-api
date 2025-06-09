@@ -21,6 +21,7 @@ export class AuthController {
   @ApiBody({ type: RegisterDto })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
+    console.log('📥 Datos recibidos en /auth/register:', registerDto);
     return this.usersService.create(registerDto);
   }
 

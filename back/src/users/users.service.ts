@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,15 +24,42 @@ export class UsersService {
   }
 
   async create(registerDto: RegisterDto): Promise<User> {
-    const { username, fullName, email, password } = registerDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({
-      username,
-      fullName,
-      email,
-      password: hashedPassword,
-    });
-    return this.usersRepository.save(user);
+    console.log('🛠️ Intentando crear usuario:', registerDto);
+    try {
+      // Validación de contraseñas
+      if (registerDto.password !== registerDto.confirmPassword) {
+        console.error('❌ Contraseñas no coinciden');
+        throw new BadRequestException('Las contraseñas no coinciden');
+      }
+
+      // Validación de usuario/email existente
+      const existingUser = await this.usersRepository.findOne({
+        where: [{ email: registerDto.email }, { username: registerDto.username }],
+      });
+      if (existingUser) {
+        console.error('❌ Usuario o email ya existe');
+        throw new BadRequestException('El usuario o email ya existe');
+      }
+
+      // Hashear y guardar
+      const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+      console.log('🔑 Password hasheada:', hashedPassword);
+      const user = this.usersRepository.create({
+        ...registerDto,
+        password: hashedPassword,
+      });
+      const savedUser = await this.usersRepository.save(user);
+      console.log('✅ Usuario creado:', savedUser);
+      return savedUser;
+    } catch (err) {
+      console.error('❌ Error al crear usuario:', err);
+      // Si ya es una excepción de Nest, relanza tal cual
+      if (err instanceof BadRequestException) throw err;
+      if (err instanceof Error) {
+        throw new BadRequestException(err.message || 'Error al registrar');
+      }
+      throw new BadRequestException('Error al registrar');
+    }
   }
 
   async findById(id: string): Promise<User> {

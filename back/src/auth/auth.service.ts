@@ -13,12 +13,16 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<User> {
+    console.log('🔍 Buscando usuario:', username);
     const user = await this.usersService.findOneByUsername(username);
     if (!user) {
+      console.error('❌ Usuario no encontrado:', username);
       throw new UnauthorizedException('Invalid credentials');
     }
     const match = await bcrypt.compare(password, user.password);
+    console.log('🔑 Contraseña coincide:', match);
     if (!match) {
+      console.error('❌ Contraseña incorrecta para:', username);
       throw new UnauthorizedException('Invalid credentials');
     }
     // remove password before returning

@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { getAllComments } from '../api/comments';
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Paper,
+  Stack,
+  Chip,
+  CircularProgress,
+} from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 
 export default function CommentList({ movieId: id }) {
   const [comments, setComments] = useState([]);
@@ -8,7 +22,6 @@ export default function CommentList({ movieId: id }) {
   useEffect(() => {
     getAllComments()
       .then(data => {
-        // Si recibes todos los comentarios, filtra por movieId si se pasa como prop
         if (id) {
           setComments(data.filter(comment => comment.movie && comment.movie.id === id));
         } else {
@@ -19,21 +32,72 @@ export default function CommentList({ movieId: id }) {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>Cargando comentarios...</div>;
-  if (!comments.length) return <div>No hay comentarios.</div>;
+  if (loading)
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  if (!comments.length)
+    return (
+      <Typography variant="body1" color="text.secondary" sx={{ my: 2 }}>
+        No hay comentarios.
+      </Typography>
+    );
 
   return (
-    <div>
-      <h3>Comentarios</h3>
-      <ul>
+    <Box sx={{ my: 4 }}>
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        Comentarios
+      </Typography>
+      <List>
         {comments.map(comment => (
-          <li key={comment.id}>
-            <strong>{comment.user?.username || 'Anónimo'}:</strong> {comment.content}
-            {comment.rating && <span> | ⭐ {comment.rating}</span>}
-            {comment.sentiment && <span> | Sentimiento: {comment.sentiment}</span>}
-          </li>
+          <ListItem key={comment.id} alignItems="flex-start" sx={{ mb: 2 }}>
+            <Paper sx={{ p: 2, width: '100%' }} elevation={3}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <ListItemAvatar>
+                  <Avatar>
+                    {comment.user?.username?.[0]?.toUpperCase() || 'A'}
+                  </Avatar>
+                </ListItemAvatar>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    {comment.user?.username || 'Anónimo'}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mt: 0.5 }}>
+                    {comment.content}
+                  </Typography>
+                  <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    {comment.rating && (
+                      <Chip
+                        icon={<StarIcon sx={{ color: '#ffb71d' }} />}
+                        label={comment.rating}
+                        size="small"
+                        color="secondary"
+                        variant="outlined"
+                      />
+                    )}
+                    {comment.sentiment && (
+                      <Chip
+                        label={`Sentimiento: ${comment.sentiment}`}
+                        size="small"
+                        color={
+                          comment.sentiment === 'positivo'
+                            ? 'success'
+                            : comment.sentiment === 'negativo'
+                            ? 'error'
+                            : 'default'
+                        }
+                        variant="outlined"
+                      />
+                    )}
+                  </Stack>
+                </Box>
+              </Stack>
+            </Paper>
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 }

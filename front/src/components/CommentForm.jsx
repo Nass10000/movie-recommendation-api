@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { createComment } from '../api/comments';
 import { AuthContext } from '../context/Authcontext';
+import { Box, Button, TextField, MenuItem, Typography, Alert, Stack } from '@mui/material';
 
 export default function CommentForm({ movieId, onCommentAdded }) {
   const [content, setContent] = useState('');
@@ -31,29 +32,50 @@ export default function CommentForm({ movieId, onCommentAdded }) {
     }
   };
 
-  if (!token) return <div>Inicia sesión para comentar.</div>;
+  if (!token) return <Alert severity="info">Inicia sesión para comentar.</Alert>;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h4>Agregar comentario</h4>
-      <textarea
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        placeholder="Escribe tu comentario"
-        required
-      />
-      <br />
-      <label>
-        Rating:
-        <select value={rating} onChange={e => setRating(e.target.value)}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        mt: 3,
+        mb: 3,
+        p: 2,
+        backgroundColor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 2,
+        maxWidth: 400,
+        mx: 'auto',
+      }}
+    >
+      <Stack spacing={2}>
+        <Typography variant="h6">Agregar comentario</Typography>
+        <TextField
+          label="Comentario"
+          multiline
+          minRows={3}
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          required
+          fullWidth
+        />
+        <TextField
+          select
+          label="Rating"
+          value={rating}
+          onChange={e => setRating(e.target.value)}
+          fullWidth
+        >
           {[1,2,3,4,5].map(n => (
-            <option key={n} value={n}>{n}</option>
+            <MenuItem key={n} value={n}>{n}</MenuItem>
           ))}
-        </select>
-      </label>
-      <br />
-      <button type="submit">Comentar</button>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-    </form>
+        </TextField>
+        <Button type="submit" variant="contained" color="primary">
+          Comentar
+        </Button>
+        {error && <Alert severity="error">{error}</Alert>}
+      </Stack>
+    </Box>
   );
 }
