@@ -11,6 +11,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import AddMovieForm from './components/AddMovieForm';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,6 +20,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+        <AddMovieForm />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

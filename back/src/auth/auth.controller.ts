@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 
 @ApiTags('auth')
@@ -81,6 +82,14 @@ export class AuthController {
   @UseGuards(AuthGuard('auth0'))
   socialCallback(@Req() req: any) {
     console.log('✅ Social login completado, user:', req.user);
+    return req.user;
+  }
+
+  @ApiOperation({ summary: 'Obtener perfil del usuario' })
+  @ApiResponse({ status: 200, description: 'Información del usuario.' })
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getProfile(@Request() req: import('express').Request) {
     return req.user;
   }
 }
