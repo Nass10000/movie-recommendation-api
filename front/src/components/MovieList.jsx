@@ -33,6 +33,9 @@ export default function MovieList({ refresh }) {
     }
   };
 
+  // Agrega aquí el console.log
+  console.log('Usuario actual:', user);
+
   if (loading)
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
@@ -46,11 +49,88 @@ export default function MovieList({ refresh }) {
       </Typography>
     );
 
+  if (user === undefined) return null; // Espera a que cargue el usuario
+  if (user === null) {
+    // Si no hay usuario logueado, no muestres el botón
+    return (
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Películas
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center' }}>
+          {movies
+            .filter(m => m.title && m.description && m.genre)
+            .map(movie => (
+              <Card
+                key={movie.id}
+                sx={{
+                  width: 400, // Más ancho
+                  minHeight: 520, // Más alto
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {movie.imageUrl && (
+                  <CardMedia
+                    component="img"
+                    height="320"
+                    image={movie.imageUrl}
+                    alt={movie.title}
+                    sx={{ objectFit: 'contain', background: '#f5f5f5' }}
+                  />
+                )}
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {movie.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    {movie.description}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    component={Link}
+                    to={`/movies/${movie.id}`}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Ver detalles
+                  </Button>
+                  {user && user.role === 'admin' && (
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDelete(movie.id)}
+                    >
+                      Eliminar
+                    </Button>
+                  )}
+                </CardActions>
+              </Card>
+            ))}
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ my: 4 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
         Películas
       </Typography>
+      {user && user.role === 'admin' && (
+        <Button
+          component={Link}
+          to="/movies/new"
+          variant="contained"
+          color="success"
+          sx={{ mb: 3 }}
+        >
+          Agregar película
+        </Button>
+      )}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center' }}>
         {movies
           .filter(m => m.title && m.description && m.genre)

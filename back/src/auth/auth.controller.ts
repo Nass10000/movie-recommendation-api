@@ -92,8 +92,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async getProfile(@Request() req: import('express').Request) {
-    // Busca el usuario completo en la base de datos usando el id del JWT
+    console.log('🟢 /auth/me llamado');
+    console.log('Token user.sub:', (req as any).user.sub);
     const user = await this.usersService.findById((req as any).user.sub);
+    console.log('Usuario encontrado:', user);
     if (!user) return null;
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;

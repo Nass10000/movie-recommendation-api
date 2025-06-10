@@ -40,9 +40,10 @@ export class CommentsController {
   @Post()
   @UseGuards(RoleGuard)
   @Roles(UserRole.USER)
-  create(@Body() dto: CreateCommentDto) {
-    console.log('POST /comments', dto); // 👈 log para debug
-    return this.commentsService.create(dto);
+  create(@Body() dto: CreateCommentDto, @Req() req: Request) {
+    // Usa el usuario autenticado, no el que venga en el body
+    const userId = (req.user as any).sub; // <--- CAMBIA 'id' por 'sub'
+    return this.commentsService.create(dto, userId);
   }
 
   @ApiOperation({ summary: 'Obtener todos los comentarios (ADMIN o USER)' })
@@ -86,7 +87,7 @@ export class CommentsController {
     if (!req.user) {
       throw new NotFoundException('Usuario no autenticado');
     }
-    return this.commentsService.update(id, dto, (req.user as any).id);
+    return this.commentsService.update(id, dto, (req.user as any).sub); // <-- CAMBIA 'id' por 'sub'
   }
 
   @ApiOperation({ summary: 'Eliminar un comentario (solo ADMIN)' })
@@ -94,10 +95,11 @@ export class CommentsController {
   @ApiParam({ name: 'id', type: 'string', description: 'ID del comentario' })
   @Delete(':id')
   @UseGuards(RoleGuard)
-  @Roles(UserRole.ADMIN)
-  async remove(@Param('id') id: string) {
-    console.log(`DELETE /comments/${id}`); // 👈 log para debug
-    return this.commentsService.remove(id);
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  async remove(@Param('id') id: string, @Req() req: Request) {
+    const userId = (req.user as any).sub;
+    await this.commentsService.remove(id, userId);
+    return { success: true };
   }
 
   @ApiOperation({ summary: 'Actualizar el sentimiento de un comentario (solo ADMIN)' })
@@ -113,5 +115,17 @@ export class CommentsController {
   ) {
     console.log(`PUT /comments/${id}/sentiment`, sentiment); // 👈 log para debug
     return this.commentsService.updateSentiment(id, sentiment);
+  }
+
+  @ApiOperation({ summary: 'Obtener comentarios por ID de película (ADMIN o USER)' })
+  @ApiResponse({ status: 200, description: 'Lista de comentarios para la película.' })
+  @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
+  @Get(':id/comments')
+  @UseGuards(RoleGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  async getCommentsForMovie(@Param('id') id: string) {
+    const comments = await this.commentsService.findByMovieId(id);
+    console.log('Comentarios devueltos por el backend:', comments); // <-- AQUÍ
+    return comments;
   }
 }

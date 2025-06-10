@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { createComment } from '../api/comments';
+import { commentMovie } from '../api/movies';
 import { AuthContext } from '../context/Authcontext';
 import { Box, Button, TextField, MenuItem, Typography, Alert, Stack } from '@mui/material';
+import Rating from '@mui/material/Rating';
 
 export default function CommentForm({ movieId, onCommentAdded }) {
   const [content, setContent] = useState('');
@@ -18,12 +19,11 @@ export default function CommentForm({ movieId, onCommentAdded }) {
     }
     try {
       const data = {
-        content,
-        movieId,
-        userId: user?.id,
+        content, // <-- usa 'content' en vez de 'comment'
         rating: Number(rating),
+        movieId, // <-- agrega movieId aquí
       };
-      await createComment(data, token);
+      await commentMovie(movieId, data, token);
       setContent('');
       setRating(5);
       if (onCommentAdded) onCommentAdded();
@@ -60,17 +60,12 @@ export default function CommentForm({ movieId, onCommentAdded }) {
           required
           fullWidth
         />
-        <TextField
-          select
-          label="Rating"
-          value={rating}
-          onChange={e => setRating(e.target.value)}
-          fullWidth
-        >
-          {[1,2,3,4,5].map(n => (
-            <MenuItem key={n} value={n}>{n}</MenuItem>
-          ))}
-        </TextField>
+        <Rating
+          name="rating"
+          value={Number(rating)}
+          onChange={(_, newValue) => setRating(newValue)}
+          max={5}
+        />
         <Button type="submit" variant="contained" color="primary">
           Comentar
         </Button>

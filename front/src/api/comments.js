@@ -58,3 +58,13 @@ export async function sendSentiment(id, data, token) {
   });
   return res.json();
 }
+
+export async function getCommentsByMovie(movieId, token) {
+  const headers = token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
+  const res = await fetch(`${API_URL}/comments/${movieId}/comments`, {
+    headers,
+  });
+  return res.json();
+}

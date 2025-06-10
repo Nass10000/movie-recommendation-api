@@ -101,11 +101,10 @@ export class MoviesController {
   @Roles(UserRole.USER)
   async commentMovie(
     @Param('id') movieId: string,
-    @Body() commentDto: { comment: string; rating: number },
+    @Body() commentDto: { content: string; rating: number }, // <-- CAMBIA AQUÍ
     @Req() req: Request & { user?: any },
   ) {
-    // req.user contiene el usuario autenticado
-    const userId = req.user?.id;
-    return this.moviesService.addComment(movieId, userId, commentDto);
+    const userId = req.user?.sub;
+    return this.moviesService.addComment(movieId, userId, commentDto); // <-- YA NO TRANSFORMES
   }
 }

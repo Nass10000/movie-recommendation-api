@@ -13,6 +13,8 @@ import {
   Skeleton,
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
+import CommentList from './CommentList';
+import CommentForm from './CommentForm';
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -20,6 +22,7 @@ export default function MovieDetail() {
   const [movie, setMovie] = useState(null);
   const [rating, setRating] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reloadComments, setReloadComments] = useState(false);
 
   useEffect(() => {
     async function fetchMovie() {
@@ -37,6 +40,8 @@ export default function MovieDetail() {
     setMovie(data);
     getMovieRating(id).then(res => setRating(res.averageRating));
   };
+
+  const handleCommentAdded = () => setReloadComments(r => !r);
 
   if (loading)
     return (
@@ -85,8 +90,9 @@ export default function MovieDetail() {
         <Typography variant="body2" color="text.secondary">
           <strong>Rating promedio:</strong> {rating !== null ? rating : 'Sin rating'}
         </Typography>
-        {/* Aquí puedes incluir tu formulario de comentarios y pasarle la prop onAddComment */}
       </CardContent>
+      <CommentForm movieId={id} onCommentAdded={handleCommentAdded} />
+      <CommentList movieId={id} reload={reloadComments} />
     </Card>
   );
 }

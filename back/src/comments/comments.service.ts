@@ -21,18 +21,20 @@ export class CommentsService {
     private readonly usersService: UsersService,
   ) {}
 
-  async create(dto: CreateCommentDto): Promise<Comment> {
+  async create(dto: CreateCommentDto, userId: string): Promise<Comment> {
+    console.log('Creando comentario:', dto, userId);
+
     try {
       const movie = await this.movieRepo.findOneBy({ id: dto.movieId });
       if (!movie) throw new NotFoundException('Película no encontrada');
 
-      const user = await this.usersService.findById(dto.userId);
+      const user = await this.usersService.findById(userId);
       if (!user || user.role !== UserRole.USER) {
         throw new ForbiddenException('Solo los usuarios pueden comentar');
       }
 
       const comment = this.commentRepo.create({
-        ...dto, // Incluye rating si viene en dto
+        ...dto, // NO pongas userId aquí
         movie,
         user,
       });
@@ -57,6 +59,16 @@ export class CommentsService {
 
   async findOne(id: string): Promise<Comment | null> {
     return this.commentRepo.findOne({ where: { id }, relations: ['movie', 'user'] });
+  }
+
+  async findByMovieId(movieId: string): Promise<Comment[]> {
+    const comments = await this.commentRepo.find({
+      where: { movie: { id: movieId } },
+      relations: ['user', 'movie'],
+      order: { createdAt: 'DESC' },
+    });
+    console.log('Comentarios encontrados en el servicio:', comments); // <-- AQUÍ
+    return comments;
   }
 
   async updateSentiment(id: string, sentiment: string) {
@@ -91,7 +103,20 @@ export class CommentsService {
     return this.commentRepo.save(comment);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, userId: string): Promise<void> {
+    const comment = await this.commentRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+    if (!comment) throw new NotFoundException('Comentario no encontrado');
+
+    // Permite borrar si es admin o dueño
+    if (!comment.user || comment.user.id !== userId) {
+      const user = await this.usersService.findById(userId);
+      if (user.role !== UserRole.ADMIN) {
+        throw new ForbiddenException('No tienes permiso para borrar este comentario');
+      }
+    }
     const result = await this.commentRepo.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException('Comentario no encontrado');

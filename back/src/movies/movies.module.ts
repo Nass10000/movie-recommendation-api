@@ -5,12 +5,16 @@ import { Movie } from './movies.entity';
 import { MoviesService } from './movies.service';
 import { MoviesController } from './movies.controller';
 import { UsersModule } from '../users/users.module';
+import { CommentsModule } from '../comments/comments.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Movie]), forwardRef(() => UsersModule)],
+  imports: [
+    TypeOrmModule.forFeature([Movie]),
+    forwardRef(() => UsersModule),
+    forwardRef(() => CommentsModule),
+  ],
   controllers: [MoviesController],
   providers: [MoviesService],
-  exports: [MoviesService], // 👈 agrega esto
-
+  exports: [MoviesService],
 })
 export class MoviesModule {}

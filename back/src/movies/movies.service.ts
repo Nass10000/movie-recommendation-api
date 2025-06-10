@@ -7,6 +7,7 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { UsersService } from '../users/users.service';
 import { UserRole } from '../common/role.enum';
+import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
 export class MoviesService {
@@ -15,6 +16,7 @@ export class MoviesService {
     private movieRepo: Repository<Movie>,
     private readonly usersService: UsersService,
     private readonly dataSource: DataSource, // 👈 inyecta DataSource
+    private readonly commentsService: CommentsService, // <--- agrega esto
   ) {}
 
   async create(dto: CreateMovieDto) {
@@ -70,16 +72,15 @@ export class MoviesService {
     return result && result.avg !== null ? parseFloat(result.avg) : null;
   }
 
-  async addComment(movieId: string, userId: string, commentDto: { comment: string; rating: number }) {
-    // Implement logic to add a comment and rating to the movie
-    // Example placeholder implementation:
-    // You should replace this with your actual database logic
-    return {
-      movieId,
-      userId,
-      comment: commentDto.comment,
-      rating: commentDto.rating,
-      message: 'Comentario agregado correctamente.',
-    };
+  async addComment(movieId: string, userId: string, commentDto: { content: string; rating: number }) {
+    // Llama al servicio de comentarios para guardar el comentario
+    return this.commentsService.create(
+      {
+        content: commentDto.content, // <-- usa 'content'
+        rating: commentDto.rating,
+        movieId,
+      },
+      userId
+    );
   }
 }

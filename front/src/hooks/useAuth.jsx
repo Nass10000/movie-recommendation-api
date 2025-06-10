@@ -14,12 +14,21 @@ export function useAuth() {
   });
 
   // Guarda token y usuario en localStorage
-  const login = (jwt, userData) => {
-    console.log('Login llamado con:', jwt, userData);
+  const login = (jwt) => {
+    console.log('Login llamado con:', jwt);
     setToken(jwt);
-    setUser(userData);
     localStorage.setItem('token', jwt);
-    localStorage.setItem('user', JSON.stringify(userData));
+    // Obtén el usuario real desde el backend
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/me`, {
+      headers: { Authorization: `Bearer ${jwt}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        // Normaliza: si viene 'sub' pero no 'id', crea 'id'
+        if (data && data.sub && !data.id) data.id = data.sub;
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
+      });
   };
 
   // Borra token y usuario
@@ -33,12 +42,14 @@ export function useAuth() {
 
   // Si hay token pero no user, obtén el usuario desde el backend
   useEffect(() => {
-    if (token && !user) {
+    if (token) {
       fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())
         .then(data => {
+          // Normaliza: si viene 'sub' pero no 'id', crea 'id'
+          if (data && data.sub && !data.id) data.id = data.sub;
           setUser(data);
           localStorage.setItem('user', JSON.stringify(data));
         })
@@ -49,7 +60,7 @@ export function useAuth() {
           localStorage.removeItem('user');
         });
     }
-  }, [token, user]);
+  }, [token]);
 
   return { token, user, login, logout };
 }

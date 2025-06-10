@@ -12,10 +12,6 @@ export class CreateCommentDto {
   @IsUUID()
   movieId!: string;
 
-  @ApiProperty({ example: 'uuid-del-usuario' })
-  @IsUUID()
-  userId!: string;
-
   @ApiPropertyOptional({ minimum: 1, maximum: 5, example: 5 })
   @IsOptional()
   @IsInt()

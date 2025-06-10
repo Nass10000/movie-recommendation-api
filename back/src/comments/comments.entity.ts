@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Movie } from '../movies/movies.entity';
 import { User } from '../users/users.entity';
 
@@ -21,4 +21,8 @@ export class Comment {
 
   @ManyToOne(() => Movie, (movie: Movie) => movie.comments, { onDelete: 'CASCADE' })
   movie!: Movie;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }
+
