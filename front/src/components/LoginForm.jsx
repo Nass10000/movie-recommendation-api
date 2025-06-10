@@ -1,29 +1,36 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/auth';
+import { login as loginApi } from '../api/auth';
 import { AuthContext } from '../context/Authcontext';
 import { Box, Button, TextField, Typography, Alert, Stack } from '@mui/material';
 
 export default function LoginForm() {
+  const { login } = useContext(AuthContext); // <-- usa login del contexto
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const res = await login({ username, password });
+      const res = await loginApi({ username, password });
       if (res.access_token) {
-        setToken(res.access_token);
-        navigate('/');
+        login(res.access_token, res.user); // <-- aquí va esta línea
+        navigate('/');                    // <-- y aquí navegas al home
       } else {
         setError('Credenciales incorrectas');
       }
     } catch (err) {
-      setError('Error al iniciar sesión');
+      console.error('Error real al iniciar sesión:', err);
+      let msg = err.message;
+      try {
+        const parsed = JSON.parse(msg);
+        if (parsed && parsed.message) msg = parsed.message;
+      } catch (e) {}
+      if (Array.isArray(msg)) msg = msg.join(' ');
+      setError(msg || 'Error al iniciar sesión');
     }
   };
 

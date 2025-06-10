@@ -31,16 +31,16 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
-    console.log('🔑 Login body:', req.body);
-    console.log('👤 Usuario validado:', req.user);
+    console.log('🔑 Login body:', req.body);      // <-- Aquí ves los datos recibidos
+    console.log('👤 Usuario validado:', req.user); // <-- Aquí ves el usuario validado por el guard
 
     try {
-      console.log('➡️ Llamando a AuthService.login con usuario:', req.user);
+      console.log('➡️ Llamando a AuthService.login con usuario:', req.user); // <-- Antes de llamar al servicio
       const token = await this.authService.login(req.user);
-      console.log('✅ Token generado:', token);
+      console.log('✅ Token generado:', token); // <-- Después de generar el token
       return token;
     } catch (err) {
-      console.error('❌ Error en AuthService.login():', err);
+      console.error('❌ Error en AuthService.login():', err); // <-- Si hay error en el servicio
       throw err;
     }
   }

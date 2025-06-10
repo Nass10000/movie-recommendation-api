@@ -32,9 +32,17 @@ export async function login(data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  const result = await res.json();
+  let result;
+  try {
+    result = await res.json();
+  } catch (e) {
+    throw new Error('Respuesta inválida del servidor');
+  }
   if (!res.ok) {
-    throw new Error(result.message || 'Error al iniciar sesión');
+    let msg = result.message;
+    if (Array.isArray(msg)) msg = msg.join(' ');
+    if (typeof msg === 'object') msg = JSON.stringify(msg);
+    throw new Error(msg || 'Error al iniciar sesión');
   }
   return result;
 }

@@ -26,6 +26,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     // remove password before returning
+    console.log('✅ Usuario validado, retornando:', { ...user, password: '***' });
     delete (user as any).password;
     return user;
   }
@@ -34,8 +35,10 @@ export class AuthService {
     try {
       const payload = { username: user.username, sub: user.id, role: user.role };
       console.log('📋 Payload para JWT:', payload);
+      const token = this.jwtService.sign(payload);
+      console.log('✅ Token generado correctamente:', token);
       return {
-        access_token: this.jwtService.sign(payload),
+        access_token: token,
       };
     } catch (err) {
       console.error('JWT sign error:', err);
