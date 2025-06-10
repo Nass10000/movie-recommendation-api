@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovie, getMovieRating } from '../api/movies';
+import { commentMovie, getMovie, getMovieRating } from '../api/movies';
+import { AuthContext } from '../context/Authcontext';
 import {
   Box,
   Card,
@@ -15,6 +16,7 @@ import StarIcon from '@mui/icons-material/Star';
 
 export default function MovieDetail() {
   const { id } = useParams();
+  const { token } = useContext(AuthContext);
   const [movie, setMovie] = useState(null);
   const [rating, setRating] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +30,13 @@ export default function MovieDetail() {
     fetchMovie();
     getMovieRating(id).then(res => setRating(res.averageRating));
   }, [id]);
+
+  const handleAddComment = async (commentData) => {
+    await commentMovie(id, commentData, token);
+    const data = await getMovie(id);
+    setMovie(data);
+    getMovieRating(id).then(res => setRating(res.averageRating));
+  };
 
   if (loading)
     return (
@@ -76,6 +85,7 @@ export default function MovieDetail() {
         <Typography variant="body2" color="text.secondary">
           <strong>Rating promedio:</strong> {rating !== null ? rating : 'Sin rating'}
         </Typography>
+        {/* Aquí puedes incluir tu formulario de comentarios y pasarle la prop onAddComment */}
       </CardContent>
     </Card>
   );

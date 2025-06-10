@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { getAllMovies } from '../api/movies';
+import React, { useEffect, useState, useContext } from 'react';
+import { getAllMovies, deleteMovie } from '../api/movies';
+import { AuthContext } from '../context/Authcontext';
 import { Link } from 'react-router-dom';
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardMedia,
   CardContent,
@@ -13,16 +13,25 @@ import {
   CircularProgress,
 } from '@mui/material';
 
-export default function MovieList() {
+export default function MovieList({ refresh }) {
+  const { token, user } = useContext(AuthContext);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllMovies()
+    setLoading(true);
+    getAllMovies(token)
       .then(setMovies)
       .catch(() => setMovies([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [refresh, token]);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Seguro que quieres eliminar esta película?')) {
+      await deleteMovie(id, token);
+      setMovies(movies => movies.filter(m => m.id !== id));
+    }
+  };
 
   if (loading)
     return (
@@ -42,17 +51,26 @@ export default function MovieList() {
       <Typography variant="h4" sx={{ mb: 3 }}>
         Películas
       </Typography>
-      <Grid container spacing={3}>
-        {movies.map(movie => (
-          <Grid item xs={12} sm={6} md={4} key={movie.id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center' }}>
+        {movies
+          .filter(m => m.title && m.description && m.genre)
+          .map(movie => (
+            <Card
+              key={movie.id}
+              sx={{
+                width: 400, // Más ancho
+                minHeight: 520, // Más alto
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               {movie.imageUrl && (
                 <CardMedia
                   component="img"
-                  height="240"
+                  height="320"
                   image={movie.imageUrl}
                   alt={movie.title}
-                  sx={{ objectFit: 'cover' }}
+                  sx={{ objectFit: 'contain', background: '#f5f5f5' }}
                 />
               )}
               <CardContent>
@@ -73,11 +91,20 @@ export default function MovieList() {
                 >
                   Ver detalles
                 </Button>
+                {user && user.role === 'admin' && (
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDelete(movie.id)}
+                  >
+                    Eliminar
+                  </Button>
+                )}
               </CardActions>
             </Card>
-          </Grid>
-        ))}
-      </Grid>
+          ))}
+      </Box>
     </Box>
   );
 }

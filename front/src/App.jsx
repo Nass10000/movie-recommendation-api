@@ -7,20 +7,13 @@ import Login from './pages/login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import MoviePage from './pages/Moviepages';
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import AddMovieForm from './components/AddMovieForm';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
-        <AddMovieForm />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -30,7 +23,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;

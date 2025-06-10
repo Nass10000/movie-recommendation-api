@@ -32,16 +32,18 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req: any) {
-    console.log('🔑 Login body:', req.body);      // <-- Aquí ves los datos recibidos
-    console.log('👤 Usuario validado:', req.user); // <-- Aquí ves el usuario validado por el guard
+    console.log('🔑 Login body:', req.body);
+    console.log('👤 Usuario validado:', req.user);
 
     try {
-      console.log('➡️ Llamando a AuthService.login con usuario:', req.user); // <-- Antes de llamar al servicio
+      console.log('➡️ Llamando a AuthService.login con usuario:', req.user);
       const token = await this.authService.login(req.user);
-      console.log('✅ Token generado:', token); // <-- Después de generar el token
-      return token;
+      // Busca el usuario completo en la base de datos usando el id
+      const user = await this.usersService.findById(req.user.id);
+      const { password, ...userWithoutPassword } = user;
+      return { ...token, user: userWithoutPassword };
     } catch (err) {
-      console.error('❌ Error en AuthService.login():', err); // <-- Si hay error en el servicio
+      console.error('❌ Error en AuthService.login():', err);
       throw err;
     }
   }
@@ -89,7 +91,11 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Información del usuario.' })
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getProfile(@Request() req: import('express').Request) {
-    return req.user;
+  async getProfile(@Request() req: import('express').Request) {
+    // Busca el usuario completo en la base de datos usando el id del JWT
+    const user = await this.usersService.findById((req as any).user.sub);
+    if (!user) return null;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 }

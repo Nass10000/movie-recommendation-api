@@ -1,9 +1,13 @@
 import { API_URL } from './auth';
 
-// Obtener todas las películas (público)
-export async function getAllMovies() {
+// Obtener todas las películas (requiere token)
+export async function getAllMovies(token) {
   console.log('GET /movies');
-  const res = await fetch(`${API_URL}/movies`);
+  const res = await fetch(`${API_URL}/movies`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.json();
 }
 
