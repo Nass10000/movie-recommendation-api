@@ -33,6 +33,14 @@ export class CommentsService {
         throw new ForbiddenException('Solo los usuarios pueden comentar');
       }
 
+      const existing = await this.commentRepo.findOne({
+        where: { user: { id: userId }, movie: { id: dto.movieId } },
+        relations: ['user', 'movie'],
+      });
+      if (existing) {
+        throw new ForbiddenException('Solo puedes comentar una vez por película. Edita tu comentario si deseas cambiarlo.');
+      }
+
       const comment = this.commentRepo.create({
         ...dto, // NO pongas userId aquí
         movie,

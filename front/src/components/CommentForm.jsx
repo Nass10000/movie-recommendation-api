@@ -7,14 +7,14 @@ import Rating from '@mui/material/Rating';
 export default function CommentForm({ movieId, onCommentAdded }) {
   const [content, setContent] = useState('');
   const [rating, setRating] = useState(5);
-  const [error, setError] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const { token, user } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setErrorMsg('');
     if (!content.trim()) {
-      setError('El comentario no puede estar vacío');
+      setErrorMsg('El comentario no puede estar vacío');
       return;
     }
     try {
@@ -28,7 +28,7 @@ export default function CommentForm({ movieId, onCommentAdded }) {
       setRating(5);
       if (onCommentAdded) onCommentAdded();
     } catch (err) {
-      setError('Error al enviar el comentario');
+      setErrorMsg('Solo puedes comentar una vez por película. Edita tu comentario si deseas cambiarlo.');
     }
   };
 
@@ -69,7 +69,11 @@ export default function CommentForm({ movieId, onCommentAdded }) {
         <Button type="submit" variant="contained" color="primary">
           Comentar
         </Button>
-        {error && <Alert severity="error">{error}</Alert>}
+        {errorMsg && (
+          <Alert severity="error" onClose={() => setErrorMsg('')}>
+            {errorMsg}
+          </Alert>
+        )}
       </Stack>
     </Box>
   );

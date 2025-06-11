@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, Unique } from 'typeorm';
 import { Movie } from '../movies/movies.entity';
 import { User } from '../users/users.entity';
 
 @Entity()
+@Unique(['user', 'movie']) // Esto evita duplicados
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id!: string;

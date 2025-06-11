@@ -66,15 +66,19 @@ export async function deleteMovie(id, token) {
 }
 
 // Comentar una película (solo USER, requiere token)
-export async function commentMovie(id, comment, token) {
-  console.log('POST /movies/' + id + '/comments', comment);
-  const res = await fetch(`${API_URL}/movies/${id}/comments`, {
+export async function commentMovie(movieId, data, token) {
+  console.log('POST /movies/' + movieId + '/comments', data);
+  const res = await fetch(`${API_URL}/movies/${movieId}/comments`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(comment),
+    body: JSON.stringify(data),
   });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Error al comentar');
+  }
   return res.json();
 }
