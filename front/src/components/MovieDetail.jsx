@@ -31,7 +31,11 @@ export default function MovieDetail() {
       setLoading(false);
     }
     fetchMovie();
-    getMovieRating(id).then(res => setRating(res.averageRating));
+    console.log('ID de la película para rating:', id);
+    getMovieRating(id).then(res => {
+      console.log('Respuesta de getMovieRating:', res);
+      setRating(res.averageRating);
+    });
   }, [id]);
 
   const handleAddComment = async (commentData) => {
@@ -78,7 +82,7 @@ export default function MovieDetail() {
           {rating !== null && (
             <Chip
               icon={<StarIcon sx={{ color: '#ffb71d' }} />}
-              label={rating}
+              label={rating !== null ? Number(rating).toFixed(1) : 'N/A'}
               color="secondary"
               variant="filled"
             />
@@ -86,9 +90,6 @@ export default function MovieDetail() {
         </Stack>
         <Typography variant="body1" sx={{ mb: 2 }}>
           {movie.description}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Rating promedio:</strong> {rating !== null ? rating : 'Sin rating'}
         </Typography>
       </CardContent>
       <CommentForm movieId={id} onCommentAdded={handleCommentAdded} />

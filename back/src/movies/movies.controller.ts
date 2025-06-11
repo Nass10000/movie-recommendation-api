@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RoleGuard } from '../common/role.guard';
 import { Roles } from '../common/roles.decorator';
 import { UserRole } from '../common/role.enum';
+import { Public } from '../auth/public.decorator';
 import {
   ApiTags,
   ApiBearerAuth,
@@ -64,6 +65,7 @@ export class MoviesController {
   @ApiOperation({ summary: 'Obtener el rating promedio de una película' })
   @ApiResponse({ status: 200, description: 'Rating promedio obtenido.' })
   @ApiParam({ name: 'id', type: 'string', description: 'ID de la película' })
+  @Public()
   @Get(':id/rating')
   async getAverageRating(@Param('id') id: string) {
     console.log(`GET /movies/${id}/rating`);

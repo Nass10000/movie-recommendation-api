@@ -120,17 +120,7 @@ export default function MovieList({ refresh }) {
       <Typography variant="h4" sx={{ mb: 3 }}>
         Películas
       </Typography>
-      {user && user.role === 'admin' && (
-        <Button
-          component={Link}
-          to="/movies/new"
-          variant="contained"
-          color="success"
-          sx={{ mb: 3 }}
-        >
-          Agregar película
-        </Button>
-      )}
+     
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center' }}>
         {movies
           .filter(m => m.title && m.description && m.genre)

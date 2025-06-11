@@ -9,7 +9,7 @@ export default function MoviePage() {
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Stack spacing={4}>
-        <MovieDetail id={id} />
+        <MovieDetail />
       </Stack>
     </Container>
   );
