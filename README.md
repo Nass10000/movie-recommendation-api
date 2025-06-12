@@ -1,92 +1,100 @@
-# Movie Recommendation API
+Movie Recommendation API
+Estado: En desarrollo 🚧
 
-**Estado:** En desarrollo 🚧
-
-**Descripción**
+Descripción
 Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un frontend en React (Vite) para recomendar películas. Implementa autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios vía API REST.
 
-## Características
+Características
+CRUD de películas y comentarios
 
-* CRUD de películas y comentarios
-* Registro e inicio de sesión con JWT y Auth0
-* Tests automáticos con Python (pytest) y Schemathesis
-* Frontend en React con React Router y Hooks personalizados
+Registro e inicio de sesión con JWT y Auth0
 
-## Tech Stack
+Tests automáticos con Python (pytest) y Schemathesis
 
-* **Backend:** NestJS, TypeScript, TypeORM, PostgreSQL
-* **Frontend:** React, Vite, React Router
-* **Testing:** Python 3.8+, pytest, Schemathesis
+Frontend en React con React Router y Hooks personalizados
 
-## Requisitos
+Entorno dockerizado con Docker y Docker Compose
 
-* Node.js ≥18 y npm o yarn
-* PostgreSQL en funcionamiento
-* Python ≥3.8 y pip
+Tech Stack
+Backend: NestJS, TypeScript, TypeORM, PostgreSQL
 
-## Instalación y puesta en marcha
+Frontend: React, Vite, React Router
 
-1. Clona el repositorio:
+Testing: Python 3.8+, pytest, Schemathesis
 
-   ```bash
-   git clone <URL-del-repositorio>
-   ```
-2. Configura las variables de entorno en `back/.env`:
+Contenedores: Docker, Docker Compose
 
-   ```env
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USERNAME=postgres
-   DB_PASSWORD=tuPassword
-   DB_NAME=movie_recommender
-   JWT_SECRET=tuJWTSecret
-   AUTH0_DOMAIN=tuAuth0Domain
-   AUTH0_CLIENT_ID=tuClientId
-   AUTH0_CLIENT_SECRET=tuClientSecret
-   ```
-3. Instala dependencias del backend:
+Requisitos
+Node.js ≥18 y npm o yarn
 
-   ```bash
-   cd back
-   npm install
-   ```
-4. Instala dependencias del frontend:
+PostgreSQL en funcionamiento
 
-   ```bash
-   cd ../front
-   npm install
-   ```
+Python ≥3.8 y pip
 
-## En desarrollo
+Docker y Docker Compose (opcional pero recomendado)
 
-* **Backend:**
+Instalación y puesta en marcha
+Clona el repositorio:
 
-  ```bash
-  cd back
-  npm run start:dev
-  ```
-* **Frontend:**
+bash
+Copiar
+Editar
+git clone <URL-del-repositorio>
+Configura las variables de entorno en back/.env:
 
-  ```bash
-  cd front
-  npm run dev
-  ```
+env
+Copiar
+Editar
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=tuPassword
+DB_NAME=movie_recommender
+JWT_SECRET=tuJWTSecret
+AUTH0_DOMAIN=tuAuth0Domain
+AUTH0_CLIENT_ID=tuClientId
+AUTH0_CLIENT_SECRET=tuClientSecret
+Instala dependencias del backend:
 
-## Testing de la API
+bash
+Copiar
+Editar
+cd back
+npm install
+Instala dependencias del frontend:
 
-1. Desde `back/src`:
+bash
+Copiar
+Editar
+cd ../front
+npm install
+En desarrollo
+Backend:
 
-   ```bash
-   pip install -r requirements.txt  # si existe, o instala pytest y requests
-   pytest
-   ```
+bash
+Copiar
+Editar
+cd back
+npm run start:dev
+Frontend:
 
-## Contribución
+bash
+Copiar
+Editar
+cd front
+npm run dev
+Testing de la API
+Desde back/src:
 
-1. Crea una rama con prefijo `feature/` o `fix/`.
-2. Realiza tus cambios e incluye logs con `console.log()` para debug.
-3. Abre un Pull Request describiendo tus cambios.
+bash
+Copiar
+Editar
+pip install -r requirements.txt  # si existe, o instala pytest y requests
+pytest
+Contribución
+Crea una rama con prefijo feature/ o fix/.
 
----
+Realiza tus cambios e incluye logs con console.log() para debug.
 
-¡Vamos con todo! Este README es tu guía rápida para seguir avanzando. Sigue puliendo features y pronto tendremos la primera versión estable.
+Abre un Pull Request describiendo tus cambios.
+
