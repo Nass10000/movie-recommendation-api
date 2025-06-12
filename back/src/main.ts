@@ -43,7 +43,8 @@ async function bootstrap() {
   });
 
   // Monta Swagger UI en /docs
-  SwaggerModule.setup('docs', app, document);
+SwaggerModule.setup('api', app, document);
+
 
   // Expone el JSON de la spec en /swagger-json
   app.use('/swagger-json', (req: Request, res: Response) =>
