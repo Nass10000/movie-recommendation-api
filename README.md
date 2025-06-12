@@ -1,6 +1,3 @@
-Claro, aquí tienes el mismo README **sin cambios** excepto por la adición de Docker como tecnología utilizada, resaltando que usaste `Docker` y `Docker Compose` para levantar todo el entorno local:
-
----
 
 # Movie Recommendation API
 
@@ -100,4 +97,3 @@ Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un front
 
 ---
 
-¡Vamos con todo! Este README es tu guía rápida para seguir avanzando. Sigue puliendo features y pronto tendremos la primera versión estable.
