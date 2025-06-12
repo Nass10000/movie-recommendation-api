@@ -1,100 +1,103 @@
-Movie Recommendation API
-Estado: En desarrollo 🚧
+Claro, aquí tienes el mismo README **sin cambios** excepto por la adición de Docker como tecnología utilizada, resaltando que usaste `Docker` y `Docker Compose` para levantar todo el entorno local:
 
-Descripción
+---
+
+# Movie Recommendation API
+
+**Estado:** En desarrollo 🚧
+
+**Descripción**
 Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un frontend en React (Vite) para recomendar películas. Implementa autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios vía API REST.
 
-Características
-CRUD de películas y comentarios
+## Características
 
-Registro e inicio de sesión con JWT y Auth0
+* CRUD de películas y comentarios
+* Registro e inicio de sesión con JWT y Auth0
+* Tests automáticos con Python (pytest) y Schemathesis
+* Frontend en React con React Router y Hooks personalizados
+* **Entorno dockerizado con Docker y Docker Compose**
 
-Tests automáticos con Python (pytest) y Schemathesis
+## Tech Stack
 
-Frontend en React con React Router y Hooks personalizados
+* **Backend:** NestJS, TypeScript, TypeORM, PostgreSQL
+* **Frontend:** React, Vite, React Router
+* **Testing:** Python 3.8+, pytest, Schemathesis
+* **Contenedores:** Docker, Docker Compose
 
-Entorno dockerizado con Docker y Docker Compose
+## Requisitos
 
-Tech Stack
-Backend: NestJS, TypeScript, TypeORM, PostgreSQL
+* Node.js ≥18 y npm o yarn
+* PostgreSQL en funcionamiento
+* Python ≥3.8 y pip
+* Docker y Docker Compose (opcional pero recomendado)
 
-Frontend: React, Vite, React Router
+## Instalación y puesta en marcha
 
-Testing: Python 3.8+, pytest, Schemathesis
+1. Clona el repositorio:
 
-Contenedores: Docker, Docker Compose
+   ```bash
+   git clone <URL-del-repositorio>
+   ```
 
-Requisitos
-Node.js ≥18 y npm o yarn
+2. Configura las variables de entorno en `back/.env`:
 
-PostgreSQL en funcionamiento
+   ```env
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USERNAME=postgres
+   DB_PASSWORD=tuPassword
+   DB_NAME=movie_recommender
+   JWT_SECRET=tuJWTSecret
+   AUTH0_DOMAIN=tuAuth0Domain
+   AUTH0_CLIENT_ID=tuClientId
+   AUTH0_CLIENT_SECRET=tuClientSecret
+   ```
 
-Python ≥3.8 y pip
+3. Instala dependencias del backend:
 
-Docker y Docker Compose (opcional pero recomendado)
+   ```bash
+   cd back
+   npm install
+   ```
 
-Instalación y puesta en marcha
-Clona el repositorio:
+4. Instala dependencias del frontend:
 
-bash
-Copiar
-Editar
-git clone <URL-del-repositorio>
-Configura las variables de entorno en back/.env:
+   ```bash
+   cd ../front
+   npm install
+   ```
 
-env
-Copiar
-Editar
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=tuPassword
-DB_NAME=movie_recommender
-JWT_SECRET=tuJWTSecret
-AUTH0_DOMAIN=tuAuth0Domain
-AUTH0_CLIENT_ID=tuClientId
-AUTH0_CLIENT_SECRET=tuClientSecret
-Instala dependencias del backend:
+## En desarrollo
 
-bash
-Copiar
-Editar
-cd back
-npm install
-Instala dependencias del frontend:
+* **Backend:**
 
-bash
-Copiar
-Editar
-cd ../front
-npm install
-En desarrollo
-Backend:
+  ```bash
+  cd back
+  npm run start:dev
+  ```
 
-bash
-Copiar
-Editar
-cd back
-npm run start:dev
-Frontend:
+* **Frontend:**
 
-bash
-Copiar
-Editar
-cd front
-npm run dev
-Testing de la API
-Desde back/src:
+  ```bash
+  cd front
+  npm run dev
+  ```
 
-bash
-Copiar
-Editar
-pip install -r requirements.txt  # si existe, o instala pytest y requests
-pytest
-Contribución
-Crea una rama con prefijo feature/ o fix/.
+## Testing de la API
 
-Realiza tus cambios e incluye logs con console.log() para debug.
+1. Desde `back/src`:
 
-Abre un Pull Request describiendo tus cambios.
+   ```bash
+   pip install -r requirements.txt  # si existe, o instala pytest y requests
+   pytest
+   ```
 
+## Contribución
+
+1. Crea una rama con prefijo `feature/` o `fix/`.
+2. Realiza tus cambios e incluye logs con `console.log()` para debug.
+3. Abre un Pull Request describiendo tus cambios.
+
+---
+
+¡Vamos con todo! Este README es tu guía rápida para seguir avanzando. Sigue puliendo features y pronto tendremos la primera versión estable.
