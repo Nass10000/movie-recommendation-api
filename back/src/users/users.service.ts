@@ -72,6 +72,11 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  async findByEmail(email: string): Promise<User | undefined> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    return user === null ? undefined : user;
+  }
+
   // alias para register si tu controller lo usa
   async register(dto: RegisterDto): Promise<User> {
     return this.create(dto);

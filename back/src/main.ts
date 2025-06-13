@@ -15,9 +15,15 @@ import { CommentsModule } from './comments/comments.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
+  // Inicializa la conexión a la base de datos
   await AppDataSource.initialize();
+
+  // Crea la aplicación Nest
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Obtén el HttpAdapterHost completo y pásalo al filtro
   const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
 
   // Habilita CORS
   app.enableCors();
@@ -25,8 +31,7 @@ async function bootstrap() {
   // Sirve archivos estáticos del frontend (React build)
   app.useStaticAssets(join(__dirname, '..', 'frontend', 'build'));
 
-  // Filtros y pipes globales
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
+  // Pipes globales
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // Configuración de Swagger
@@ -42,16 +47,15 @@ async function bootstrap() {
     include: [AuthModule, UsersModule, MoviesModule, CommentsModule],
   });
 
-  // Monta Swagger UI en /docs
-SwaggerModule.setup('api', app, document);
-
+  // Monta Swagger UI en /api
+  SwaggerModule.setup('api', app, document);
 
   // Expone el JSON de la spec en /swagger-json
   app.use('/swagger-json', (req: Request, res: Response) =>
     res.status(200).json(document),
   );
 
-  // Agrega logs para debug
+  // Logs de arranque
   console.log('🚀 Backend arrancando en puerto 3000');
   console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
   console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);

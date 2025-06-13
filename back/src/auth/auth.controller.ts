@@ -16,6 +16,19 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
+  // Genera un username único basado en el email
+  private async generateUniqueUsername(base: string): Promise<string> {
+    let username = base.split('@')[0];
+    let counter = 1;
+
+    while (await this.usersService.findOneByUsername(username)) {
+      username = `${base.split('@')[0]}${counter}`;
+      counter++;
+    }
+
+    return username;
+  }
+
   @ApiOperation({ summary: 'Registrar un nuevo usuario' })
   @ApiResponse({ status: 201, description: 'Usuario registrado correctamente.' })
   @ApiBody({ type: RegisterDto })
@@ -73,14 +86,37 @@ export class AuthController {
     console.log('➡️ Entrando a /auth/login/google');
   }
 
-  // Callback específico para Google
+  // Callback específico para Google (ruta nueva)
   @ApiOperation({ summary: 'Callback de Google OAuth via Auth0' })
   @ApiResponse({ status: 200, description: 'Usuario autenticado por Google.' })
-  @Get('auth0/callback')
+  @Get('login/google/callback')
   @UseGuards(AuthGuard('auth0-google'))
-  googleCallback(@Req() req: any) {
+  async googleCallback(@Req() req: any) {
     console.log('🎯 Google OAuth callback, user:', req.user);
-    return req.user;
+
+    const googleProfile = req.user;
+    const email = googleProfile.emails?.[0]?.value;
+    const name = googleProfile.displayName || googleProfile.name?.givenName;
+
+    let user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      const username = await this.generateUniqueUsername(email);
+      user = await this.usersService.create({
+        email,
+        password: 'google-oauth', // dummy password
+        confirmPassword: 'google-oauth', // match password for validation
+        fullName: name || email,
+        username, // usa el generado
+      });
+    }
+
+    const token = await this.authService.login(user);
+    const { password, ...userWithoutPassword } = user;
+    return {
+      ...token,
+      user: userWithoutPassword,
+    };
   }
 
   // Login directo con Facebook via Auth0
