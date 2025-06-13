@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../api/auth';
 import { AuthContext } from '../context/Authcontext';
-import { Box, Button, TextField, Typography, Alert, Stack } from '@mui/material';
+import { Box, Button, TextField, Typography, Alert, Stack, Divider } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
+
+const API = import.meta.env.VITE_API_URL || '';
 
 export default function LoginForm() {
   const { login } = useContext(AuthContext); // <-- usa login del contexto
@@ -71,22 +73,26 @@ export default function LoginForm() {
           Entrar
         </Button>
         {error && <Alert severity="error">{error}</Alert>}
+        <Divider>O usa tu red social</Divider>
         <Button
-          variant="outlined"
+          component="a"
+          href={`${API}/auth/login/google`}
+          variant="contained"
           color="primary"
           fullWidth
           startIcon={<GoogleIcon />}
-          onClick={() => window.location.href = 'http://localhost:3000/auth/login/google'}
+          sx={{ mt: 1 }}
         >
           Iniciar sesión con Google
         </Button>
         <Button
+          component="a"
+          href="/auth/login/facebook"
           variant="outlined"
           color="primary"
           fullWidth
           startIcon={<FacebookIcon />}
           sx={{ mt: 1 }}
-          onClick={() => window.location.href = 'http://localhost:3000/auth/login/facebook'}
         >
           Iniciar sesión con Facebook
         </Button>

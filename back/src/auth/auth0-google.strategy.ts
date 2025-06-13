@@ -3,8 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-auth0';
 import { Profile } from 'passport';
 
-type VerifiedCallback = (error: any, user?: any, info?: any) => void;
-
 @Injectable()
 export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-google') {
   constructor() {
@@ -14,8 +12,7 @@ export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-googl
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
       callbackURL:  process.env.AUTH0_CALLBACK_URL,
       scope:        'openid profile email',
-     state:        false,
-
+      state:        false,
     });
     console.log('✅ Google Strategy initialized:', {
       domain:      process.env.AUTH0_DOMAIN,
@@ -28,14 +25,13 @@ export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-googl
     return { connection: 'google-oauth2' };
   }
 
-async validate(
-  accessToken: string,
-  refreshToken: string,
-  extraParams: any,
-  profile: Profile,
-  done: VerifiedCallback
-): Promise<any> {
-  console.log('✅ Google user:', profile);
-  done(null, profile);
-}
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    extraParams: any,
+    profile: Profile
+  ): Promise<any> {
+    console.log('✅ Google user:', profile);
+    return profile;
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Request, Get, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,6 +7,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -91,32 +92,29 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Usuario autenticado por Google.' })
   @Get('login/google/callback')
   @UseGuards(AuthGuard('auth0-google'))
-  async googleCallback(@Req() req: any) {
+  async googleCallback(@Req() req: any, @Res() res: Response) {
     console.log('🎯 Google OAuth callback, user:', req.user);
 
     const googleProfile = req.user;
     const email = googleProfile.emails?.[0]?.value;
-    const name = googleProfile.displayName || googleProfile.name?.givenName;
+    const name  = googleProfile.displayName || googleProfile.name?.givenName;
 
     let user = await this.usersService.findByEmail(email);
-
     if (!user) {
       const username = await this.generateUniqueUsername(email);
       user = await this.usersService.create({
         email,
-        password: 'google-oauth', // dummy password
-        confirmPassword: 'google-oauth', // match password for validation
-        fullName: name || email,
-        username, // usa el generado
+        password: 'google-oauth',
+        confirmPassword: 'google-oauth',
+        fullName: name  || email,
+        username,
       });
     }
 
-    const token = await this.authService.login(user);
-    const { password, ...userWithoutPassword } = user;
-    return {
-      ...token,
-      user: userWithoutPassword,
-    };
+    const { access_token } = await this.authService.login(user);
+
+    // Redirige al frontend con el token en la query
+    return res.redirect(`/auth/callback?token=${access_token}`);
   }
 
   // Login directo con Facebook via Auth0

@@ -5,14 +5,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppDataSource } from './common/data-source';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { join } from 'path'; // <-- Agrega esto
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 // Importa los módulos que definen rutas para la documentación Swagger
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MoviesModule } from './movies/movies.module';
 import { CommentsModule } from './comments/comments.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   // Inicializa la conexión a la base de datos
@@ -21,18 +21,14 @@ async function bootstrap() {
   // Crea la aplicación Nest
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Obtén el HttpAdapterHost completo y pásalo al filtro
+  // Filtros y configuración inicial
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
-
-  // Habilita CORS
   app.enableCors();
-
-  // Sirve archivos estáticos del frontend (React build)
-  app.useStaticAssets(join(__dirname, '..', 'frontend', 'build'));
-
-  // Pipes globales
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  // Sirve archivos estáticos del frontend (Vite build) desde carpeta 'front/dist'
+  app.useStaticAssets(join(__dirname, '..', '..', 'front', 'dist'));
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
@@ -42,26 +38,27 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  // Genera el documento incluyendo solo los módulos con rutas
   const document = SwaggerModule.createDocument(app, config, {
     include: [AuthModule, UsersModule, MoviesModule, CommentsModule],
   });
 
-  // Monta Swagger UI en /api
   SwaggerModule.setup('api', app, document);
-
-  // Expone el JSON de la spec en /swagger-json
   app.use('/swagger-json', (req: Request, res: Response) =>
     res.status(200).json(document),
   );
 
-  // Logs de arranque
+  // Catch-all para servir tu SPA solo en GETs que no sean API ni Swagger
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('*', (req: Request, res: Response) => {
+    res.sendFile(join(__dirname, '..', '..', 'front', 'dist', 'index.html'));
+  });
+
+  // Logs y arranque
   console.log('🚀 Backend arrancando en puerto 3000');
   console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
   console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
   console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
 
-  // Inicia el servidor en el puerto 3000
   await app.listen(3000);
 }
 
