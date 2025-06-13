@@ -1,32 +1,34 @@
 
+
 # Movie Recommendation API
 
 **Estado:** En desarrollo 🚧
 
-**Descripción**
-Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un frontend en React (Vite) para recomendar películas. Implementa autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios vía API REST.
+**Descripción**  
+Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un frontend en React (Vite) para recomendar películas. Implementa autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios vía API REST. Además, utiliza Python para evaluar sentimientos de manera básica, añadiendo una capa de análisis a las recomendaciones.
 
 ## Características
 
-* CRUD de películas y comentarios
-* Registro e inicio de sesión con JWT y Auth0
-* Tests automáticos con Python (pytest) y Schemathesis
-* Frontend en React con React Router y Hooks personalizados
-* **Entorno dockerizado con Docker y Docker Compose**
+* CRUD de películas y comentarios.
+* Registro e inicio de sesión con JWT y Auth0 (Google/Facebook).
+* Evaluación de sentimientos con Python.
+* Tests automáticos con Python (pytest) y Schemathesis para validar endpoints.
+* Frontend en React con React Router y Hooks personalizados.
+* **Entorno dockerizado con Docker y Docker Compose**.
 
 ## Tech Stack
 
-* **Backend:** NestJS, TypeScript, TypeORM, PostgreSQL
-* **Frontend:** React, Vite, React Router
-* **Testing:** Python 3.8+, pytest, Schemathesis
-* **Contenedores:** Docker, Docker Compose
+* **Backend:** NestJS, TypeScript, TypeORM, PostgreSQL.
+* **Frontend:** React, Vite, React Router.
+* **Testing:** Python 3.8+, pytest, Schemathesis.
+* **Contenedores:** Docker, Docker Compose.
 
 ## Requisitos
 
-* Node.js ≥18 y npm o yarn
-* PostgreSQL en funcionamiento
-* Python ≥3.8 y pip
-* Docker y Docker Compose (opcional pero recomendado)
+* Node.js ≥18 y npm o yarn.
+* PostgreSQL en funcionamiento.
+* Python ≥3.8 y pip.
+* Docker y Docker Compose (opcional pero recomendado).
 
 ## Instalación y puesta en marcha
 
@@ -68,17 +70,17 @@ Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un front
 
 * **Backend:**
 
-  ```bash
-  cd back
-  npm run start:dev
-  ```
+   ```bash
+   cd back
+   npm run start:dev
+   ```
 
 * **Frontend:**
 
-  ```bash
-  cd front
-  npm run dev
-  ```
+   ```bash
+   cd front
+   npm run dev
+   ```
 
 ## Testing de la API
 
@@ -87,6 +89,12 @@ Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un front
    ```bash
    pip install -r requirements.txt  # si existe, o instala pytest y requests
    pytest
+   ```
+
+2. Validación automatizada de endpoints con Schemathesis:
+
+   ```bash
+   schemathesis run <URL-de-tu-API>
    ```
 
 ## Contribución
