@@ -4,3 +4,4 @@ back/dist/
 .DS_Store
 # Basura de macOS
 .DS_Store
+back/.env
