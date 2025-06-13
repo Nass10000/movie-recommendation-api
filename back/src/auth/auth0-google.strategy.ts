@@ -8,6 +8,12 @@ type VerifiedCallback = (error: any, user?: any, info?: any) => void;
 @Injectable()
 export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-google') {
   constructor() {
+    console.log('Google Strategy config:', {
+      domain:       process.env.AUTH0_DOMAIN,
+      clientID:     process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+      callbackURL:  process.env.AUTH0_CALLBACK_URL,
+    });
     super({
       domain:       process.env.AUTH0_DOMAIN,
       clientID:     process.env.AUTH0_CLIENT_ID,

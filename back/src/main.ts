@@ -51,6 +51,12 @@ SwaggerModule.setup('api', app, document);
     res.status(200).json(document),
   );
 
+  // Agrega logs para debug
+  console.log('🚀 Backend arrancando en puerto 3000');
+  console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
+  console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
+  console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
+
   // Inicia el servidor en el puerto 3000
   await app.listen(3000);
 }

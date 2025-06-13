@@ -18,7 +18,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 @Module({
   imports: [
     ConfigModule,
-    PassportModule.register({ defaultStrategy: 'auth0' }), // 👈 aquí agregas el defaultStrategy
+PassportModule.register({}),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
@@ -41,4 +41,11 @@ import { LocalAuthGuard } from './local-auth.guard';
   ],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule {
+  constructor() {
+    console.log('✅ AuthModule cargado');
+    console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
+    console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
+    console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
+  }
+}

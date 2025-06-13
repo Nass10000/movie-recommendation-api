@@ -8,7 +8,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -31,14 +30,12 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req: any) {
+  async login(@Req() req: any) {
     console.log('🔑 Login body:', req.body);
     console.log('👤 Usuario validado:', req.user);
-
     try {
       console.log('➡️ Llamando a AuthService.login con usuario:', req.user);
       const token = await this.authService.login(req.user);
-      // Busca el usuario completo en la base de datos usando el id
       const user = await this.usersService.findById(req.user.id);
       const { password, ...userWithoutPassword } = user;
       return { ...token, user: userWithoutPassword };
@@ -48,53 +45,61 @@ export class AuthController {
     }
   }
 
+  // Inicia el flujo Auth0 - selector de social
   @ApiOperation({ summary: 'Redirige a Auth0 para login social (selector)' })
-  @ApiResponse({ status: 200, description: 'Redirección a Auth0.' })
+  @ApiResponse({ status: 302, description: 'Redirección a Auth0.' })
   @Get('auth0')
   @UseGuards(AuthGuard('auth0'))
   auth0Login() {
-    // redirige a selector social
     console.log('🔔 Auth0 login genérico');
   }
 
+  // Callback genérico de Auth0 (para login selector)
   @ApiOperation({ summary: 'Callback de Auth0 (genérico)' })
   @ApiResponse({ status: 200, description: 'Usuario autenticado por Auth0.' })
   @Get('auth0/callback')
   @UseGuards(AuthGuard('auth0'))
   auth0Callback(@Req() req: any) {
-    console.log('🎉 Callback genérico, user:', req.user);
+    console.log('🎉 Auth0 genérico, user:', req.user);
     return req.user;
   }
 
+  // Login directo con Google via Auth0
   @ApiOperation({ summary: 'Login directo con Google (Auth0)' })
-  @ApiResponse({ status: 200, description: 'Redirección a Google login.' })
+  @ApiResponse({ status: 302, description: 'Redirección a Google login.' })
   @Get('login/google')
   @UseGuards(AuthGuard('auth0-google'))
-  googleLogin() {}
+  googleLogin() {
+    console.log('➡️ Entrando a /auth/login/google');
+  }
 
+  // Callback específico para Google
+  @ApiOperation({ summary: 'Callback de Google OAuth via Auth0' })
+  @ApiResponse({ status: 200, description: 'Usuario autenticado por Google.' })
+  @Get('auth0/callback')
+  @UseGuards(AuthGuard('auth0-google'))
+  googleCallback(@Req() req: any) {
+    console.log('🎯 Google OAuth callback, user:', req.user);
+    return req.user;
+  }
+
+  // Login directo con Facebook via Auth0
   @ApiOperation({ summary: 'Login directo con Facebook (Auth0)' })
-  @ApiResponse({ status: 200, description: 'Redirección a Facebook login.' })
+  @ApiResponse({ status: 302, description: 'Redirección a Facebook login.' })
   @Get('login/facebook')
   @UseGuards(AuthGuard('auth0-facebook'))
-  facebookLogin() {}
-
-  @ApiOperation({ summary: 'Callback general para login social' })
-  @ApiResponse({ status: 200, description: 'Usuario autenticado por login social.' })
-  @Get('callback')
-  @UseGuards(AuthGuard('auth0'))
-  socialCallback(@Req() req: any) {
-    console.log('✅ Social login completado, user:', req.user);
-    return req.user;
+  facebookLogin() {
+    console.log('➡️ Entrando a /auth/login/facebook');
   }
 
   @ApiOperation({ summary: 'Obtener perfil del usuario' })
   @ApiResponse({ status: 200, description: 'Información del usuario.' })
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async getProfile(@Request() req: import('express').Request) {
+  async getProfile(@Req() req: any) {
     console.log('🟢 /auth/me llamado');
-    console.log('Token user.sub:', (req as any).user.sub);
-    const user = await this.usersService.findById((req as any).user.sub);
+    console.log('Token user.sub:', req.user.sub);
+    const user = await this.usersService.findById(req.user.sub);
     console.log('Usuario encontrado:', user);
     if (!user) return null;
     const { password, ...userWithoutPassword } = user;

@@ -35,4 +35,12 @@ import { UsersModule } from './users/users.module';
   ],
 })
 
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log('✅ AppModule cargado');
+    console.log('🔑 DB_HOST:', process.env.DB_HOST);
+    console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
+    console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
+    console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
+  }
+}
