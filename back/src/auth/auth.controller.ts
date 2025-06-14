@@ -113,9 +113,14 @@ export class AuthController {
     console.log('🎯 JWT generado (Google):', jwt);
     console.log('🎯 Redirigiendo a:', `http://localhost:5173/auth/callback?token=${jwt}`);
 
-    return res.redirect(
-      `http://localhost:5173/auth/callback?token=${jwt}`
-    );
+    // Log ANTES del redirect
+    console.log('🚦 Antes de res.redirect');
+
+    const redirectUrl = `http://localhost:5173/auth/callback?token=${jwt}`;
+    res.redirect(redirectUrl);
+
+    // Log DESPUÉS del redirect
+    console.log('✅ Después de res.redirect a:', redirectUrl);
   }
 
   // Login directo con Facebook via Auth0
