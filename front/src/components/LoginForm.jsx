@@ -6,10 +6,11 @@ import { Box, Button, TextField, Typography, Alert, Stack, Divider } from '@mui/
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 
-const API = import.meta.env.VITE_API_URL || '';
+// Usa variable de entorno o por defecto localhost:3000
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 export default function LoginForm() {
-  const { login } = useContext(AuthContext); // <-- usa login del contexto
+  const { login } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,14 +21,15 @@ export default function LoginForm() {
     setError('');
     try {
       const res = await loginApi({ username, password });
+      console.log('🟢 Respuesta login API:', res);
       if (res.access_token) {
-        login(res.access_token, res.user); // <-- aquí va esta línea
-        navigate('/');                    // <-- y aquí navegas al home
+        login(res.access_token, res.user);
+        navigate('/');
       } else {
         setError('Credenciales incorrectas');
       }
     } catch (err) {
-      console.error('Error real al iniciar sesión:', err);
+      console.error('🔴 Error real al iniciar sesión:', err);
       let msg = err.message;
       try {
         const parsed = JSON.parse(msg);
@@ -76,7 +78,7 @@ export default function LoginForm() {
         <Divider>O usa tu red social</Divider>
         <Button
           component="a"
-          href={`${API}/auth/login/google`}
+          href={`${BACKEND_URL}/auth/login/google`}
           variant="contained"
           color="primary"
           fullWidth
@@ -87,7 +89,7 @@ export default function LoginForm() {
         </Button>
         <Button
           component="a"
-          href="/auth/login/facebook"
+          href={`${BACKEND_URL}/auth/login/facebook`}
           variant="outlined"
           color="primary"
           fullWidth

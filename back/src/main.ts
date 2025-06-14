@@ -4,7 +4,7 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { AppDataSource } from './common/data-source';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -28,8 +28,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   // Sirve archivos estáticos del frontend (Vite build) desde carpeta 'front/dist'
-  app.useStaticAssets(join(__dirname, '..', '..', 'front', 'dist'));
-  console.log('🟢 Sirviendo estáticos desde', join(__dirname, '..', '..', 'front', 'dist'));
+  // app.useStaticAssets(join(__dirname, '..', '..', 'front', 'dist'));
+  // console.log('🟢 Sirviendo estáticos desde', join(__dirname, '..', '..', 'front', 'dist'));
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
@@ -48,12 +48,18 @@ async function bootstrap() {
     res.status(200).json(document),
   );
 
-  // Catch-all para servir tu SPA solo en GETs que no sean API ni Swagger
-  const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.get('*', (req: Request, res: Response) => {
-    console.log(`📦 [Frontend SPA] Sirviendo index.html para: ${req.originalUrl}`);
-    res.sendFile(join(__dirname, '..', '..', 'front', 'dist', 'index.html'));
-  });
+  // --- SPA Fallback: Soluciona rutas directas a tu React app ---
+  // SOLO excluye rutas que DE VERDAD son solo API/documentación:
+  // const expressApp = app.getHttpAdapter().getInstance() as any;
+  // expressApp.get('*', (req: Request, res: Response, next: NextFunction) => {
+  //   if (
+  //     req.originalUrl.startsWith('/api') ||
+  //     req.originalUrl.startsWith('/swagger-json')
+  //   ) {
+  //     return next();
+  //   }
+  //   res.sendFile(join(__dirname, '..', '..', 'front', 'dist', 'index.html'));
+  // });
 
   // Logs y arranque
   console.log('🚀 Backend arrancando en puerto 3000');

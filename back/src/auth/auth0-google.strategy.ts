@@ -20,7 +20,7 @@ export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-googl
     });
   }
 
-  // ← Aquí el truco: fuerza la conexión Google
+  // Fuerza la conexión Google
   authorizationParams(): Record<string, string> {
     return { connection: 'google-oauth2' };
   }
@@ -31,7 +31,8 @@ export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-googl
     extraParams: any,
     profile: Profile
   ): Promise<any> {
-    console.log('✅ Google user:', profile);
-    return profile;
+    // Imprime el perfil completo para depuración
+    console.log('🔵 Perfil recibido en validate:', JSON.stringify(profile, null, 2));
+    return profile; // Devuelve el perfil completo
   }
 }

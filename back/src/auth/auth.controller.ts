@@ -22,6 +22,7 @@ export class AuthController {
     let username = base.split('@')[0];
     let counter = 1;
 
+    // Cambia esto: findOneByUsername debe devolver null si no existe, no lanzar error
     while (await this.usersService.findOneByUsername(username)) {
       username = `${base.split('@')[0]}${counter}`;
       counter++;
@@ -80,7 +81,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login directo con Google (Auth0)' })
   @ApiResponse({ status: 302, description: 'Redirección a Google login.' })
   @Get('login/google')
-  @UseGuards(AuthGuard('auth0-google'))
+  @UseGuards(AuthGuard('google'))
   googleLogin() {
     console.log('➡️ Entrando a /auth/login/google');
   }
@@ -89,17 +90,23 @@ export class AuthController {
   @ApiOperation({ summary: 'Callback de Google OAuth via Auth0' })
   @ApiResponse({ status: 302, description: 'Redirección al front con token.' })
   @Get('login/google/callback')
-  @UseGuards(AuthGuard('auth0-google'))
+  @UseGuards(AuthGuard('google')) // <--- usa la nueva estrategia
   async googleCallback(@Req() req: any, @Res() res: Response) {
     console.log('🎯 Google OAuth callback ejecutado, user:', req.user);
 
     const googleProfile = req.user;
+    // Extrae email y nombre del perfil de Google
     const email = googleProfile.emails?.[0]?.value;
-    const name  = googleProfile.displayName || googleProfile.name?.givenName;
+    const name  = googleProfile.displayName;
+
+    console.log('➡️ Email recibido de Google:', email);
+    console.log('➡️ Nombre recibido de Google:', name);
+    console.log('🟢 Perfil completo recibido de Google:', JSON.stringify(googleProfile, null, 2));
 
     let user = await this.usersService.findByEmail(email);
     if (!user) {
       const username = await this.generateUniqueUsername(email);
+      console.log('🆕 Creando usuario nuevo con:', { email, username, name });
       user = await this.usersService.create({
         email,
         password: 'google-oauth',
@@ -107,20 +114,17 @@ export class AuthController {
         fullName: name || email,
         username,
       });
+      console.log('✅ Usuario creado:', user);
+    } else {
+      console.log('👤 Usuario ya existe:', user);
     }
 
     const { access_token: jwt } = await this.authService.login(user);
-    console.log('🎯 JWT generado (Google):', jwt);
-    console.log('🎯 Redirigiendo a:', `http://localhost:5173/auth/callback?token=${jwt}`);
-
-    // Log ANTES del redirect
-    console.log('🚦 Antes de res.redirect');
+    console.log('🔑 JWT generado:', jwt);
 
     const redirectUrl = `http://localhost:5173/auth/callback?token=${jwt}`;
+    console.log('🔁 Redirigiendo a:', redirectUrl);
     res.redirect(redirectUrl);
-
-    // Log DESPUÉS del redirect
-    console.log('✅ Después de res.redirect a:', redirectUrl);
   }
 
   // Login directo con Facebook via Auth0

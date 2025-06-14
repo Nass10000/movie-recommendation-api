@@ -12,15 +12,12 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async findOneByUsername(username: string): Promise<User> {
+  async findOneByUsername(username: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       where: { username },
       select: ['id', 'username', 'fullName', 'email', 'password', 'role', 'createdAt', 'updatedAt'],
     });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+    return user ?? null; // Devuelve null si no existe
   }
 
   async create(registerDto: RegisterDto): Promise<User> {

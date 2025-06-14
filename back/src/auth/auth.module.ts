@@ -14,6 +14,7 @@ import { Auth0Strategy } from './auth0.strategy';
 import { Auth0GoogleStrategy } from './auth0-google.strategy';
 import { Auth0FacebookStrategy } from './auth0-facebook.strategy';
 import { LocalAuthGuard } from './local-auth.guard';
+import { GoogleStrategy } from './passport-google-oauth20';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ PassportModule.register({}),
     LocalStrategy,
     JwtStrategy,
     Auth0Strategy,
+    GoogleStrategy
   ],
   controllers: [AuthController],
 })
