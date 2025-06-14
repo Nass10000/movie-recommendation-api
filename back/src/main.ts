@@ -29,6 +29,7 @@ async function bootstrap() {
 
   // Sirve archivos estáticos del frontend (Vite build) desde carpeta 'front/dist'
   app.useStaticAssets(join(__dirname, '..', '..', 'front', 'dist'));
+  console.log('🟢 Sirviendo estáticos desde', join(__dirname, '..', '..', 'front', 'dist'));
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
@@ -50,6 +51,7 @@ async function bootstrap() {
   // Catch-all para servir tu SPA solo en GETs que no sean API ni Swagger
   const expressApp = app.getHttpAdapter().getInstance();
   expressApp.get('*', (req: Request, res: Response) => {
+    console.log(`📦 [Frontend SPA] Sirviendo index.html para: ${req.originalUrl}`);
     res.sendFile(join(__dirname, '..', '..', 'front', 'dist', 'index.html'));
   });
 

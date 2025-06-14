@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Res, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -47,16 +47,10 @@ export class AuthController {
   async login(@Req() req: any) {
     console.log('🔑 Login body:', req.body);
     console.log('👤 Usuario validado:', req.user);
-    try {
-      console.log('➡️ Llamando a AuthService.login con usuario:', req.user);
-      const token = await this.authService.login(req.user);
-      const user = await this.usersService.findById(req.user.id);
-      const { password, ...userWithoutPassword } = user;
-      return { ...token, user: userWithoutPassword };
-    } catch (err) {
-      console.error('❌ Error en AuthService.login():', err);
-      throw err;
-    }
+    const token = await this.authService.login(req.user);
+    const user = await this.usersService.findById(req.user.id);
+    const { password, ...userWithoutPassword } = user;
+    return { ...token, user: userWithoutPassword };
   }
 
   // Inicia el flujo Auth0 - selector de social
@@ -68,14 +62,18 @@ export class AuthController {
     console.log('🔔 Auth0 login genérico');
   }
 
-  // Callback genérico de Auth0 (para login selector)
+  // Callback genérico de Auth0 (para login selector) con redirect
   @ApiOperation({ summary: 'Callback de Auth0 (genérico)' })
-  @ApiResponse({ status: 200, description: 'Usuario autenticado por Auth0.' })
+  @ApiResponse({ status: 302, description: 'Redirección al front con token.' })
   @Get('auth0/callback')
   @UseGuards(AuthGuard('auth0'))
-  auth0Callback(@Req() req: any) {
+  async auth0Callback(@Req() req: any, @Res() res: Response) {
     console.log('🎉 Auth0 genérico, user:', req.user);
-    return req.user;
+    const { access_token: jwt } = await this.authService.login(req.user);
+    console.log('🎯 JWT generado (genérico):', jwt);
+    return res.redirect(
+      `http://localhost:5173/auth/callback?token=${jwt}`
+    );
   }
 
   // Login directo con Google via Auth0
@@ -87,13 +85,13 @@ export class AuthController {
     console.log('➡️ Entrando a /auth/login/google');
   }
 
-  // Callback específico para Google (ruta nueva)
+  // Callback específico para Google (ruta nueva) con redirect
   @ApiOperation({ summary: 'Callback de Google OAuth via Auth0' })
-  @ApiResponse({ status: 200, description: 'Usuario autenticado por Google.' })
+  @ApiResponse({ status: 302, description: 'Redirección al front con token.' })
   @Get('login/google/callback')
   @UseGuards(AuthGuard('auth0-google'))
   async googleCallback(@Req() req: any, @Res() res: Response) {
-    console.log('🎯 Google OAuth callback, user:', req.user);
+    console.log('🎯 Google OAuth callback ejecutado, user:', req.user);
 
     const googleProfile = req.user;
     const email = googleProfile.emails?.[0]?.value;
@@ -106,15 +104,18 @@ export class AuthController {
         email,
         password: 'google-oauth',
         confirmPassword: 'google-oauth',
-        fullName: name  || email,
+        fullName: name || email,
         username,
       });
     }
 
-    const { access_token } = await this.authService.login(user);
+    const { access_token: jwt } = await this.authService.login(user);
+    console.log('🎯 JWT generado (Google):', jwt);
+    console.log('🎯 Redirigiendo a:', `http://localhost:5173/auth/callback?token=${jwt}`);
 
-    // Redirige al frontend con el token en la query
-    return res.redirect(`/auth/callback?token=${access_token}`);
+    return res.redirect(
+      `http://localhost:5173/auth/callback?token=${jwt}`
+    );
   }
 
   // Login directo con Facebook via Auth0
@@ -132,10 +133,7 @@ export class AuthController {
   @Get('me')
   async getProfile(@Req() req: any) {
     console.log('🟢 /auth/me llamado');
-    console.log('Token user.sub:', req.user.sub);
     const user = await this.usersService.findById(req.user.sub);
-    console.log('Usuario encontrado:', user);
-    if (!user) return null;
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }

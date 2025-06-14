@@ -8,20 +8,20 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import MoviePage from './pages/Moviepages';
 import AuthCallback from './pages/AuthCallback';
-import GoogleCallback from './pages/GoogleCallback'; // Asegúrate de tener este componente
 import './App.css';
 
 function App() {
-  console.log('Render App con ruta actual:', window.location.pathname);
+  console.log('%c[App] Renderizando App. Ruta actual:', 'color: orange; font-weight: bold', window.location.pathname);
+
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+        <div style={{ position: 'fixed', bottom: 0, right: 0, background: '#ffecb3', color: '#444', zIndex: 999, padding: 4 }}>
+          <small>Ruta: {window.location.pathname}</small>
+        </div>
         <Routes>
-          {/* Ruta para el callback de Google */}
-          <Route path="/auth/login/google" element={<GoogleCallback />} />
-
-          {/* Ruta para el callback general de Auth */}
+          {/* Recibe cualquier OAuth y monta AuthCallback */}
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Otras rutas de tu app */}
