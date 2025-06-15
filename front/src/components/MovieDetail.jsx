@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { commentMovie, getMovie, getMovieRating } from '../api/movies';
 import { AuthContext } from '../context/Authcontext';
 import {
@@ -23,6 +23,8 @@ export default function MovieDetail() {
   const [rating, setRating] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reloadComments, setReloadComments] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     async function fetchMovie() {
@@ -38,11 +40,10 @@ export default function MovieDetail() {
     });
   }, [id]);
 
- 
-
   const handleCommentAdded = () => {
-    setReloadComments(r => !r); // Recarga comentarios
-    getMovieRating(id).then(res => setRating(res.averageRating)); // <-- Actualiza el promedio
+    setReloadComments(r => !r);
+    // Refresca la ruta actual (simula un refresh)
+    navigate(0);
   };
 
   if (loading)
