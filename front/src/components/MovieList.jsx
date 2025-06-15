@@ -50,8 +50,9 @@ export default function MovieList({ refresh }) {
     );
 
   if (user === undefined) return null; // Espera a que cargue el usuario
-  if (user === null) {
-    // Si no hay usuario logueado, no muestres el botón
+
+  if (!token && user === null) {
+    // Solo si NO hay token y NO hay usuario, muestra el mensaje de no logueado
     return (
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" sx={{ mb: 3 }}>

@@ -127,14 +127,14 @@ export class AuthController {
     res.redirect(redirectUrl);
   }
 
-  // Login directo con Facebook via Auth0
-  @ApiOperation({ summary: 'Login directo con Facebook (Auth0)' })
-  @ApiResponse({ status: 302, description: 'Redirección a Facebook login.' })
-  @Get('login/facebook')
-  @UseGuards(AuthGuard('auth0-facebook'))
-  facebookLogin() {
-    console.log('➡️ Entrando a /auth/login/facebook');
-  }
+  // // Login directo con Facebook via Auth0
+  // @ApiOperation({ summary: 'Login directo con Facebook (Auth0)' })
+  // @ApiResponse({ status: 302, description: 'Redirección a Facebook login.' })
+  // @Get('login/facebook')
+  // @UseGuards(AuthGuard('auth0-facebook'))
+  // facebookLogin() {
+  //   console.log('➡️ Entrando a /auth/login/facebook');
+  // }
 
   @ApiOperation({ summary: 'Obtener perfil del usuario' })
   @ApiResponse({ status: 200, description: 'Información del usuario.' })

@@ -87,17 +87,7 @@ export default function LoginForm() {
         >
           Iniciar sesión con Google
         </Button>
-        <Button
-          component="a"
-          href={`${BACKEND_URL}/auth/login/facebook`}
-          variant="outlined"
-          color="primary"
-          fullWidth
-          startIcon={<FacebookIcon />}
-          sx={{ mt: 1 }}
-        >
-          Iniciar sesión con Facebook
-        </Button>
+    
       </Stack>
     </Box>
   );

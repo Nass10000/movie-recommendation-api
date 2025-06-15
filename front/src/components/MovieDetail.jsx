@@ -38,14 +38,12 @@ export default function MovieDetail() {
     });
   }, [id]);
 
-  const handleAddComment = async (commentData) => {
-    await commentMovie(id, commentData, token);
-    const data = await getMovie(id);
-    setMovie(data);
-    getMovieRating(id).then(res => setRating(res.averageRating));
-  };
+ 
 
-  const handleCommentAdded = () => setReloadComments(r => !r);
+  const handleCommentAdded = () => {
+    setReloadComments(r => !r); // Recarga comentarios
+    getMovieRating(id).then(res => setRating(res.averageRating)); // <-- Actualiza el promedio
+  };
 
   if (loading)
     return (

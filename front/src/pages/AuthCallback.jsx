@@ -29,10 +29,10 @@ export default function AuthCallback() {
     if (token) {
       login(token);
       console.log('🟢 Token válido, llamando login() y navegando a /');
-      navigate('/');
+      navigate('/', { replace: true }); // <-- usa la ruta principal
     } else {
       console.log('🔴 No se recibió token, navegando a /login');
-      navigate('/login');
+      navigate('/login', { replace: true });
     }
   }, [login, navigate]);
 
