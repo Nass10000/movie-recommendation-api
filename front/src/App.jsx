@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import MoviePage from './pages/Moviepages';
 import AuthCallback from './pages/AuthCallback';
+import About from './pages/About';
+import Tecnologias from './pages/Tecnologias'; // crea este archivo si aún no existe
 import './App.css';
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/movies/:id" element={<MoviePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/tecnologias" element={<Tecnologias />} />
 
           {/* Catch-all: redirige a home */}
           <Route path="*" element={<Navigate to="/" replace />} />

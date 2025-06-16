@@ -11,7 +11,9 @@ import {
   CardActions,
   Button,
   CircularProgress,
+  Alert,
 } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 export default function MovieList({ refresh }) {
   const { token, user } = useContext(AuthContext);
@@ -42,76 +44,42 @@ export default function MovieList({ refresh }) {
         <CircularProgress />
       </Box>
     );
-  if (!movies.length)
-    return (
-      <Typography variant="body1" color="text.secondary" sx={{ my: 2 }}>
-        No hay películas disponibles.
-      </Typography>
-    );
 
   if (user === undefined) return null; // Espera a que cargue el usuario
 
   if (!token && user === null) {
-    // Solo si NO hay token y NO hay usuario, muestra el mensaje de no logueado
+    // Usuario NO logueado: muestra solo el mensaje
     return (
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" sx={{ mb: 3 }}>
-          Películas
-        </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, justifyContent: 'center' }}>
-          {movies
-            .filter(m => m.title && m.description && m.genre)
-            .map(movie => (
-              <Card
-                key={movie.id}
-                sx={{
-                  width: 400, // Más ancho
-                  minHeight: 520, // Más alto
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {movie.imageUrl && (
-                  <CardMedia
-                    component="img"
-                    height="320"
-                    image={movie.imageUrl}
-                    alt={movie.title}
-                    sx={{ objectFit: 'contain', background: '#f5f5f5' }}
-                  />
-                )}
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {movie.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    {movie.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    component={Link}
-                    to={`/movies/${movie.id}`}
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Ver detalles
-                  </Button>
-                  {user && user.role === 'admin' && (
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDelete(movie.id)}
-                    >
-                      Eliminar
-                    </Button>
-                  )}
-                </CardActions>
-              </Card>
-            ))}
-        </Box>
+      <Box sx={{ my: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Alert
+          icon={<LockOutlinedIcon fontSize="inherit" />}
+          severity="info"
+          sx={{
+            mb: 2,
+            maxWidth: 440,
+            fontSize: 22,
+            background: 'linear-gradient(90deg, #e0e7ff 0%, #f7f7ff 100%)',
+            color: '#222',
+            borderRadius: 3,
+            boxShadow: 4,
+            py: 3,
+            px: 4,
+            textAlign: 'center',
+          }}
+        >
+          <strong>Debes iniciar sesión para ver las películas disponibles.</strong>
+        </Alert>
+      </Box>
+    );
+  }
+
+  if (!movies.length) {
+    // Usuario logueado pero no hay películas
+    return (
+      <Box sx={{ my: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Alert severity="info" sx={{ mb: 2, maxWidth: 400, fontSize: 18 }}>
+          No hay películas disponibles.
+        </Alert>
       </Box>
     );
   }

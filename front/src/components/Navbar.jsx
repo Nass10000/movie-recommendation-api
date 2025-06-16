@@ -19,11 +19,17 @@ export function Navbar() {
   return (
     <AppBar position="static" color="primary" enableColorOnDark>
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          <Button color="inherit" component={Link} to="/" sx={{ fontWeight: 700 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+          <Button color="inherit" component={Link} to="/" sx={{ fontWeight: 700, mr: 2 }}>
             PelisApp
           </Button>
-        </Typography>
+          <Button color="inherit" component={Link} to="/about" sx={{ mr: 1 }}>
+            About Us
+          </Button>
+          <Button color="inherit" component={Link} to="/tecnologias">
+            Tecnologías
+          </Button>
+        </Box>
         <Box>
           {token ? (
             <>
