@@ -1,6 +1,6 @@
 node_modules/
 back/dist/
-.env
+
 .DS_Store
 # Basura de macOS
 .DS_Store
