@@ -31,8 +31,8 @@ jobs:
         working-directory: ./front
         run: npm run build
 
-      # ---------- DEPLOY (ejemplo usando rsync a un VPS) ----------
-      - name: Deploy a servidor remoto (ejemplo)
+      # ---------- DEPLOY ----------
+      - name: Deploy a servidor remoto con rsync
         if: github.ref == 'refs/heads/main'
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -40,5 +40,10 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          rsync -avz --delete ./back/ user@your-server:/ruta/backend/
-          rsync -avz --delete ./front/dist/ user@your-server:/ruta/frontend/
+          ssh-keyscan -H TU.IP.AQUI >> ~/.ssh/known_hosts
+
+          echo "🔁 Haciendo deploy del backend..."
+          rsync -avz --delete ./back/ USUARIO@TU.IP.AQUI:/ruta/del/backend/
+
+          echo "🧾 Haciendo deploy del frontend..."
+          rsync -avz --delete ./front/dist/ USUARIO@TU.IP.AQUI:/ruta/del/frontend/
