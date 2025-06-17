@@ -61,13 +61,13 @@ async function bootstrap() {
   //   res.sendFile(join(__dirname, '..', '..', 'front', 'dist', 'index.html'));
   // });
 
-  // Logs y arranque
-  console.log('🚀 Backend arrancando en puerto 3000');
+  // Usa el puerto de la variable de entorno PORT o 3000 por defecto
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`🚀 Backend escuchando en puerto ${port}`);
   console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
   console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
   console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
-
-  await app.listen(3000);
 }
 
 bootstrap();
