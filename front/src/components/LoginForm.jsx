@@ -4,10 +4,10 @@ import { login as loginApi } from '../api/auth';
 import { AuthContext } from '../context/Authcontext';
 import { Box, Button, TextField, Typography, Alert, Stack, Divider } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
 
-// Usa variable de entorno o por defecto localhost:3000
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+// Variable centralizada
+import { API_URL } from '../api/api';
+const ROOT_URL = API_URL.replace('/api', ''); // solo si API_URL termina en /api
 
 export default function LoginForm() {
   const { login } = useContext(AuthContext);
@@ -78,7 +78,7 @@ export default function LoginForm() {
         <Divider>O usa tu red social</Divider>
         <Button
           component="a"
-          href={`${BACKEND_URL}/auth/login/google`}
+          href={`${ROOT_URL}/auth/login/google`}  // <-- aquí el fix
           variant="contained"
           color="primary"
           fullWidth
@@ -87,7 +87,6 @@ export default function LoginForm() {
         >
           Iniciar sesión con Google
         </Button>
-    
       </Stack>
     </Box>
   );

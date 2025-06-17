@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../api/api';
+
 
 export function useAuth() {
   console.log('useAuth hook ejecutándose');
@@ -20,7 +22,7 @@ export function useAuth() {
     setToken(jwt);
     localStorage.setItem('token', jwt);
 
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/me`, {
+    fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${jwt}` }
     })
       .then(res => res.json())
@@ -49,7 +51,7 @@ export function useAuth() {
   useEffect(() => {
     if (token && !user) {
       console.log('[useAuth] useEffect: Hay token pero no user, buscando...');
-      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth/me`, {
+      fetch(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
