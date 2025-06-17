@@ -1,0 +1,44 @@
+name: Deploy NodeJS Fullstack App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      # ---------- BACKEND ----------
+      - name: Instalar dependencias backend
+        working-directory: ./back
+        run: npm install
+
+      - name: Compilar backend
+        working-directory: ./back
+        run: npm run build
+
+      # ---------- FRONTEND ----------
+      - name: Instalar dependencias frontend
+        working-directory: ./front
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ./front
+        run: npm run build
+
+      # ---------- DEPLOY (ejemplo usando rsync a un VPS) ----------
+      - name: Deploy a servidor remoto (ejemplo)
+        if: github.ref == 'refs/heads/main'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          rsync -avz --delete ./back/ user@your-server:/ruta/backend/
+          rsync -avz --delete ./front/dist/ user@your-server:/ruta/frontend/
