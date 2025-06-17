@@ -73,7 +73,7 @@ export class AuthController {
     const { access_token: jwt } = await this.authService.login(req.user);
     console.log('🎯 JWT generado (genérico):', jwt);
     return res.redirect(
-      `http://localhost:5173/auth/callback?token=${jwt}`
+      `https://movie-recommendation-api-1xwj.onrender.com/auth/callback?token=${jwt}`
     );
   }
 
@@ -122,7 +122,7 @@ export class AuthController {
     const { access_token: jwt } = await this.authService.login(user);
     console.log('🔑 JWT generado:', jwt);
 
-    const redirectUrl = `http://localhost:5173/auth/callback?token=${jwt}`;
+    const redirectUrl = `https://movie-recommendation-api-1xwj.onrender.com/auth/callback?token=${jwt}`;
     console.log('🔁 Redirigiendo a:', redirectUrl);
     res.redirect(redirectUrl);
   }
