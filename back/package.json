@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Proyecto de recomendación de películas",
   "scripts": {
+    
+  "prebuild": "echo 'Compilando desde' $(pwd) && ls -l src",
+
+
+
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
