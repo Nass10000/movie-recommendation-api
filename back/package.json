@@ -2,14 +2,11 @@
   "name": "postgres_sql",
   "version": "1.0.0",
   "description": "Proyecto de recomendación de películas",
-  "scripts": {
-    
-  "prebuild": "echo 'Compilando desde' $(pwd) && ls -l src",
-
-
-
-    "build": "nest build",
-    "postbuild": "ls -l dist && find dist",
+"scripts": {
+  
+  "prebuild": "ls -l . && ls -l src && ls -l",
+  "build": "nest build",
+  "postbuild": "ls -l dist && find dist",
 
     "start": "nest start",
     "start:dev": "nest start --watch",
