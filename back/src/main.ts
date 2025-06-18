@@ -15,7 +15,11 @@ import { MoviesModule } from './movies/movies.module';
 import { CommentsModule } from './comments/comments.module';
 
 async function bootstrap() {
-    console.log('🟢 DATABASE_URL en uso:', process.env.DATABASE_URL);
+  console.log('==============================');
+  console.log('🚀 Iniciando Movie API Backend');
+  console.log('🟢 NODE_ENV:', process.env.NODE_ENV);
+  console.log('🟢 DATABASE_URL:', process.env.DATABASE_URL);
+  console.log('==============================');
 
   // Inicializa la conexión a la base de datos
   await AppDataSource.initialize();
@@ -66,10 +70,12 @@ async function bootstrap() {
   // Usa el puerto de la variable de entorno PORT o 3000 por defecto
   const port = Number(process.env.PORT) || 3000;
   await app.listen(port, '0.0.0.0');
+  console.log('==============================');
   console.log(`🚀 Backend escuchando en puerto ${port}`);
   console.log('🔑 AUTH0_DOMAIN:', process.env.AUTH0_DOMAIN);
   console.log('🔑 AUTH0_CLIENT_ID:', process.env.AUTH0_CLIENT_ID);
   console.log('🔑 AUTH0_CALLBACK_URL:', process.env.AUTH0_CALLBACK_URL);
+  console.log('==============================');
 }
 
 bootstrap();
