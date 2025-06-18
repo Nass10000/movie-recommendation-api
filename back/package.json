@@ -4,14 +4,11 @@
   "description": "Proyecto de recomendación de películas",
 "scripts": {
   
-  "prebuild": "ls -l . && ls -l src && ls -l",
   "build": "nest build",
-  "postbuild": "ls -l dist && find dist",
-
-    "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:prod": "node dist/main.js"
-  },
+  "start": "nest start",
+  "start:dev": "nest start --watch",
+  "start:prod": "node dist/main.js"
+},
   "dependencies": {
     "@nestjs/common": "^10.4.18",
     "@nestjs/config": "^4.0.2",
