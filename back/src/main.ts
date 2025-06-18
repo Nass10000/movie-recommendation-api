@@ -10,7 +10,6 @@ import { Request, Response, NextFunction } from 'express';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { MoviesModule } from './movies/movies.module';
@@ -23,18 +22,14 @@ async function bootstrap() {
   console.log('🟢 DATABASE_URL:', process.env.DATABASE_URL);
   console.log('==============================');
 
-
   await AppDataSource.initialize();
 
-
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
 
   const httpAdapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapterHost));
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
 
   const config = new DocumentBuilder()
     .setTitle('Movie Recommendation API')
@@ -52,7 +47,6 @@ async function bootstrap() {
     res.status(200).json(document),
   );
 
-  
   const port = Number(process.env.PORT) || 3000;
   await app.listen(port, '0.0.0.0');
   console.log('==============================');
