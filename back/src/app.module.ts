@@ -12,15 +12,31 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => {
-        const url = config.get<string>('DATABASE_URL');
-        return {
-          type: 'postgres',
-          url,
-          ssl: { rejectUnauthorized: false },
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          migrations: [__dirname + '/migrations/*{.ts,.js}'],
-          synchronize: true,
-        };
+        const isProduction = config.get('NODE_ENV') === 'production';
+        const databaseUrl = config.get<string>('DATABASE_URL');
+        if (databaseUrl && isProduction) {
+          return {
+            type: 'postgres',
+            url: databaseUrl,
+            ssl: { rejectUnauthorized: false },
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            migrations: [__dirname + '/migrations/*{.ts,.js}'],
+            synchronize: true,
+          };
+        } else {
+          return {
+            type: 'postgres',
+            host: config.get('DB_HOST', 'localhost'),
+            port: parseInt(config.get('DB_PORT', '5432')),
+            username: config.get('DB_USERNAME', 'postgres'),
+            password: config.get('DB_PASSWORD', 'tu_password_local'),
+            database: config.get('DB_NAME', 'movie_recommender'),
+            ssl: false,
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            migrations: [__dirname + '/migrations/*{.ts,.js}'],
+            synchronize: true,
+          };
+        }
       },
       inject: [ConfigService],
     }),

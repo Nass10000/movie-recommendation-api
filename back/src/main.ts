@@ -15,6 +15,8 @@ import { MoviesModule } from './movies/movies.module';
 import { CommentsModule } from './comments/comments.module';
 
 async function bootstrap() {
+    console.log('🟢 DATABASE_URL en uso:', process.env.DATABASE_URL);
+
   // Inicializa la conexión a la base de datos
   await AppDataSource.initialize();
 
