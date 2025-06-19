@@ -2,14 +2,13 @@
   "name": "postgres_sql",
   "version": "1.0.0",
   "description": "Proyecto de recomendación de películas",
-"scripts": {
-  "clean": "rm -rf dist",
-  "build": "npm run clean && nest build && ls -la dist && echo POSTBUILD",
-  "start": "nest start",
-  "start:dev": "nest start --watch",
-  “start:prod”: “node dist/src/main”
-
-},
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && nest build && ls -la dist && echo POSTBUILD",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/src/main"
+  },
   "dependencies": {
     "@nestjs/common": "^10.4.18",
     "@nestjs/config": "^4.0.2",
