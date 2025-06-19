@@ -4,10 +4,11 @@
   "description": "Proyecto de recomendación de películas",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && nest build && ls -la dist && echo POSTBUILD",
+    "build": "npm run clean && nest build",
+    "postbuild": "ls -la dist/back/src",
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "start:prod": "node dist/src/main"
+    "start:prod": "node dist/back/src/main"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.18",
