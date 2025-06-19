@@ -4,7 +4,8 @@
   "description": "Proyecto de recomendación de películas",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && nest build",
+    "prebuild": "ls -la && pwd && echo PREBUILD",
+    "build": "npm run clean && nest build && ls -la dist && echo POSTBUILD",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js"

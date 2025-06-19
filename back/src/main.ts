@@ -1,6 +1,8 @@
 console.log('Arrancando backend...');
 
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+console.log('DIRNAME:', __dirname);
+console.log('FILENAME:', __filename);
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
