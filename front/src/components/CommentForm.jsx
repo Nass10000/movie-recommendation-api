@@ -23,6 +23,7 @@ export default function CommentForm({ movieId, onCommentAdded }) {
         rating: Number(rating),
         movieId, // <-- agrega movieId aquí
       };
+      console.log('Token usado para comentar:', token);
       await commentMovie(movieId, data, token);
       setContent('');
       setRating(5);
