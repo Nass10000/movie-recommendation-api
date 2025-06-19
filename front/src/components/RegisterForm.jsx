@@ -57,6 +57,12 @@ export default function RegisterForm() {
     }
   };
 
+  // Clear localStorage on component mount
+  React.useEffect(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }, []);
+
   return (
     <Box
       component="form"

@@ -23,7 +23,7 @@ export default function LoginForm() {
       const res = await loginApi({ username, password });
       console.log('🟢 Respuesta login API:', res);
       if (res.access_token) {
-        login(res.access_token, res.user);
+        login(res.access_token);
         navigate('/');
       } else {
         setError('Credenciales incorrectas');
