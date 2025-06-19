@@ -25,7 +25,10 @@ export function useAuth() {
     fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${jwt}` }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('No autorizado');
+        return res.json();
+      })
       .then(data => {
         if (data && data.sub && !data.id) data.id = data.sub;
         setUser(data);
