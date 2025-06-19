@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppDataSource } from './common/data-source';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import express from 'express'; // Importación corregida
+import type { Response } from 'express';
 
 async function bootstrap() {
   console.log('==============================');
