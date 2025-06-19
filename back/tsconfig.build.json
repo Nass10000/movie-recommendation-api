@@ -6,6 +6,10 @@
     "declaration": true,
     "emitDeclarationOnly": false
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/app.module.ts",
+    "src/main.ts",
+    "src/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }
