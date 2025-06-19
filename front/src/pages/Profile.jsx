@@ -1,23 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../context/Authcontext';
-import { getUser } from '../api/users';
-import { Container, Paper, Typography, Stack, Alert, CircularProgress } from '@mui/material';
+import { Container, Paper, Typography, Stack, Alert } from '@mui/material';
 
 export default function Profile() {
   const { token, user } = useContext(AuthContext);
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user && token) {
-      getUser(user.id, token)
-        .then(setProfile)
-        .catch(() => setProfile(null))
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [user, token]);
 
   if (!token)
     return (
@@ -25,14 +11,8 @@ export default function Profile() {
         <Alert severity="info">Debes iniciar sesión para ver tu perfil.</Alert>
       </Container>
     );
-  if (loading)
-    return (
-      <Container maxWidth="sm" sx={{ mt: 8, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography variant="body1" sx={{ mt: 2 }}>Cargando perfil...</Typography>
-      </Container>
-    );
-  if (!profile)
+
+  if (!user)
     return (
       <Container maxWidth="sm" sx={{ mt: 8 }}>
         <Alert severity="error">No se pudo cargar el perfil.</Alert>
@@ -46,11 +26,14 @@ export default function Profile() {
           Perfil de usuario
         </Typography>
         <Stack spacing={2}>
-          <Typography><strong>Usuario:</strong> {profile.username}</Typography>
-          <Typography><strong>Nombre completo:</strong> {profile.fullName}</Typography>
-          <Typography><strong>Email:</strong> {profile.email}</Typography>
-          <Typography><strong>Rol:</strong> {profile.role}</Typography>
-          <Typography><strong>Creado:</strong> {new Date(profile.createdAt).toLocaleString()}</Typography>
+          <Typography><strong>Usuario:</strong> {user.username || ''}</Typography>
+          <Typography><strong>Nombre completo:</strong> {user.fullName || ''}</Typography>
+          <Typography><strong>Email:</strong> {user.email || ''}</Typography>
+          <Typography><strong>Rol:</strong> {user.role || ''}</Typography>
+          <Typography>
+            <strong>Creado:</strong>{' '}
+            {user.createdAt ? new Date(user.createdAt).toLocaleString() : ''}
+          </Typography>
         </Stack>
       </Paper>
     </Container>
