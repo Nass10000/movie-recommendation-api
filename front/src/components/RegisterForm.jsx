@@ -37,6 +37,8 @@ export default function RegisterForm() {
       // Éxito si res tiene un id (usuario creado) o res.user existe
       if ((res && res.id) || (res && res.user)) {
         setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setTimeout(() => navigate('/login'), 1500);
       } else if (res && res.message) {
         console.log('Mensaje de error del backend:', res.message);
