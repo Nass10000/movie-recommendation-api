@@ -1,19 +1,34 @@
+// back/src/auth/jwt.strategy.ts
 import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy as any, 'jwt') {
-  constructor(private configService: ConfigService) {
-    super({
+export class JwtAuthStrategy extends PassportStrategy(JwtStrategy, 'jwt') {
+  constructor(private readonly configService: ConfigService) {
+    // 1️⃣ Extrae el secreto JWT antes de llamar a super()
+    const secret = configService.get<string>('JWT_SECRET');
+
+    // 2️⃣ Prepara las opciones para la estrategia (sin anotación de tipo explícita)
+    const opts = {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('JWT_SECRET')!,
-    } as StrategyOptions);
+      ignoreExpiration: false,
+      secretOrKey: secret,
+    };
+
+    // 3️⃣ Inicializa la estrategia con las opciones
+    super(opts);
+
+    console.log('✅ [JwtAuthStrategy] initialized with secret:', secret);
   }
 
+  // 4️⃣ Método validate que devuelve el payload decodificado
   async validate(payload: any) {
-    // Devuelve el payload completo, así req.user.sub estará disponible
-    return { ...payload };
+    console.log('🔵 [JwtAuthStrategy] payload:', payload);
+    return {
+      userId: payload.sub,
+      username: payload.username,
+    };
   }
 }

@@ -1,26 +1,31 @@
+// src/auth/auth0-google.strategy.ts
+
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-auth0';
-import { Profile } from 'passport';
+import { Strategy, StrategyOptionsWithRequest, Profile } from 'passport-auth0';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-google') {
-  constructor() {
+export class Auth0GoogleStrategy extends PassportStrategy(
+  Strategy,
+  'auth0-google',
+) {
+  constructor(private readonly config: ConfigService) {
     super({
-      domain:       process.env.AUTH0_DOMAIN,
-      clientID:     process.env.AUTH0_CLIENT_ID,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET,
-      callbackURL:  process.env.AUTH0_CALLBACK_URL,
+      domain:       config.get<string>('AUTH0_DOMAIN'),
+      clientID:     config.get<string>('AUTH0_CLIENT_ID'),
+      clientSecret: config.get<string>('AUTH0_CLIENT_SECRET'),
+      callbackURL:  config.get<string>('AUTH0_CALLBACK_URL'),
       scope:        'openid profile email',
       state:        false,
-    });
+    } as StrategyOptionsWithRequest);
+
     console.log('✅ Google Strategy initialized:', {
-      domain:      process.env.AUTH0_DOMAIN,
-      callbackURL: process.env.AUTH0_CALLBACK_URL
+      domain:      config.get<string>('AUTH0_DOMAIN'),
+      callbackURL: config.get<string>('AUTH0_CALLBACK_URL'),
     });
   }
 
-  // Fuerza la conexión Google
   authorizationParams(): Record<string, string> {
     return { connection: 'google-oauth2' };
   }
@@ -29,10 +34,9 @@ export class Auth0GoogleStrategy extends PassportStrategy(Strategy, 'auth0-googl
     accessToken: string,
     refreshToken: string,
     extraParams: any,
-    profile: Profile
+    profile: Profile,
   ): Promise<any> {
-    // Imprime el perfil completo para depuración
-    console.log('🔵 Perfil recibido en validate:', JSON.stringify(profile, null, 2));
-    return profile; // Devuelve el perfil completo
+    console.log('🔵 Perfil recibido en validate:', profile);
+    return profile;
   }
 }
