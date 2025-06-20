@@ -41,7 +41,7 @@ export default function Home() {
             mb: 2,
           }}
         />
-        {user && user.role === 'admin' && (
+        {user && user.role?.toLowerCase() === 'admin' && (
           <Button
             variant="contained"
             color="primary"

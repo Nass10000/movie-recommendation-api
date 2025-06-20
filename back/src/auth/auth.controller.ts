@@ -119,6 +119,7 @@ export class AuthController {
       console.log('👤 Usuario ya existe:', user);
     }
 
+
     const { access_token: jwt } = await this.authService.login(user);
     console.log('🔑 JWT generado:', jwt);
 

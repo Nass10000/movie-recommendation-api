@@ -130,7 +130,7 @@ export default function MovieList({ refresh }) {
                 >
                   Ver detalles
                 </Button>
-                {user && user.role === 'admin' && (
+                {user && user.role?.toLowerCase() === 'admin' && (
                   <Button
                     size="small"
                     variant="outlined"
