@@ -29,7 +29,6 @@ export default function CommentForm({ movieId, onCommentAdded }) {
       setRating(5);
       if (onCommentAdded) onCommentAdded();
     } catch (err) {
-      // Intenta extraer el mensaje real del backend
       let msg = 'Error al comentar';
       if (err.response && err.response.data) {
         // Si el backend responde con { message: ... }
@@ -38,7 +37,8 @@ export default function CommentForm({ movieId, onCommentAdded }) {
         } else if (Array.isArray(err.response.data.message)) {
           msg = err.response.data.message.join(', ');
         } else {
-          msg = JSON.stringify(err.response.data);
+          // Usa JSON.stringify para mostrar el objeto completo
+          msg = JSON.stringify(err.response.data, null, 2);
         }
       } else if (err.message) {
         msg = err.message;
