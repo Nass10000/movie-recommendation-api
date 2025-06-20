@@ -78,7 +78,10 @@ export async function commentMovie(movieId, data, token) {
   });
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.message || 'Error al comentar');
+    let msg = error.message;
+    if (typeof msg === 'object') msg = JSON.stringify(msg, null, 2);
+    if (Array.isArray(msg)) msg = msg.join(', ');
+    throw new Error(msg || 'Error al comentar');
   }
   return res.json();
 }
