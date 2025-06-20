@@ -4,11 +4,12 @@
 
 
 **Descripción**  
-Este es un proyecto simple pero funcional, que implementa una aplicación de recomendación de películas con arquitectura full stack. El backend está desarrollado con NestJS (TypeScript) y utiliza PostgreSQL como base de datos. El frontend está construido con React (Vite), ofreciendo una interfaz ligera y moderna.
+Este es un proyecto simple pero funcional, que implementa una aplicación de recomendación de películas con arquitectura full stack. El backend está desarrollado con **NestJS (TypeScript)** y utiliza **PostgreSQL** como base de datos. El frontend está construido con **React (Vite)**, ofreciendo una interfaz ligera y moderna.
 
-La aplicación incluye autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios a través de una API REST estructurada. Además, incorpora un microservicio en Python para realizar un análisis básico de sentimientos sobre los comentarios, lo que añade una dimensión analítica sencilla pero efectiva a las recomendaciones.
+La aplicación incluye autenticación con **JWT** y **Auth0 (Google/Facebook)**, manejo de usuarios y **roles** (con un rol de **administrador** capaz de agregar, editar y eliminar películas en la base de datos), así como gestión de películas y comentarios a través de una API REST estructurada. Además, incorpora un microservicio en **Python** para realizar un análisis básico de sentimientos sobre los comentarios, lo que añade una dimensión analítica sencilla pero efectiva a las recomendaciones.
 
 Ideal como punto de partida para proyectos más complejos o como demostración de una arquitectura escalable y modular.
+
 
 ## API Deploy
 
