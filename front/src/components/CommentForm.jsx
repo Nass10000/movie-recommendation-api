@@ -29,7 +29,9 @@ export default function CommentForm({ movieId, onCommentAdded }) {
       setRating(5);
       if (onCommentAdded) onCommentAdded();
     } catch (err) {
-      setErrorMsg('Solo puedes comentar una vez por película. Edita tu comentario si deseas cambiarlo.');
+      // Mostrar el mensaje real del backend
+      let msg = err.message || 'Error al comentar';
+      setErrorMsg(msg); // Mostrar siempre el mensaje real
     }
   };
 
