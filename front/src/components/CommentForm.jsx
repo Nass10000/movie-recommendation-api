@@ -29,9 +29,21 @@ export default function CommentForm({ movieId, onCommentAdded }) {
       setRating(5);
       if (onCommentAdded) onCommentAdded();
     } catch (err) {
-      // Mostrar el mensaje real del backend
-      let msg = err.message || 'Error al comentar';
-      setErrorMsg(msg); // Mostrar siempre el mensaje real
+      // Intenta extraer el mensaje real del backend
+      let msg = 'Error al comentar';
+      if (err.response && err.response.data) {
+        // Si el backend responde con { message: ... }
+        if (typeof err.response.data.message === 'string') {
+          msg = err.response.data.message;
+        } else if (Array.isArray(err.response.data.message)) {
+          msg = err.response.data.message.join(', ');
+        } else {
+          msg = JSON.stringify(err.response.data);
+        }
+      } else if (err.message) {
+        msg = err.message;
+      }
+      setErrorMsg(msg);
     }
   };
 
