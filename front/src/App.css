@@ -14,6 +14,33 @@ body {
   flex-direction: column;
 }
 
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  #root {
+    padding: 1rem;
+  }
+  .logo {
+    height: 4em;
+    padding: 1em;
+  }
+  .card {
+    padding: 1em;
+  }
+}
+
+@media (max-width: 600px) {
+  #root {
+    padding: 0.5rem;
+  }
+  .logo {
+    height: 2.5em;
+    padding: 0.5em;
+  }
+  .card {
+    padding: 0.5em;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
