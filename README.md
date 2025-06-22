@@ -4,7 +4,20 @@
 
 
 **Descripción**  
-Este proyecto ofrece un backend en NestJS (TypeScript) con PostgreSQL y un frontend en React (Vite) para recomendar películas. Implementa autenticación con JWT y Auth0 (Google/Facebook), manejo de usuarios, películas y comentarios vía API REST. Además, utiliza Python para evaluar sentimientos de manera básica, añadiendo una capa de análisis a las recomendaciones.
+Este es un proyecto simple pero funcional, que implementa una aplicación de recomendación de películas con arquitectura full stack. El backend está desarrollado con **NestJS (TypeScript)** y utiliza **PostgreSQL** como base de datos. El frontend está construido con **React (Vite)**, ofreciendo una interfaz ligera y moderna.
+
+La aplicación incluye autenticación con **JWT** y **Auth0 (Google/Facebook)**, manejo de usuarios y **roles** (con un rol de **administrador** capaz de agregar, editar y eliminar películas en la base de datos), así como gestión de películas y comentarios a través de una API REST estructurada. Además, incorpora un microservicio en **Python** para realizar un análisis básico de sentimientos sobre los comentarios, lo que añade una dimensión analítica sencilla pero efectiva a las recomendaciones.
+
+Ideal como punto de partida para proyectos más complejos o como demostración de una arquitectura escalable y modular.
+
+
+## API Deploy
+
+La API está desplegada en Render y disponible en:
+
+[https://movie-recommendation-api-1xwj.onrender.com](https://movie-recommendation-api-1xwj.onrender.com)
+
+Puedes usar esta URL para hacer peticiones desde tu frontend o herramientas como Postman.
 
 ## Características
 
